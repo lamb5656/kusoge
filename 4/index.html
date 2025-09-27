@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>糸通し（押すと上昇・離すと下降）</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header>
+    <h1>糸通し</h1>
+    <div class="controls">
+      <label>難易度
+        <select id="difficulty">
+          <option value="easy">かんたん</option>
+          <option value="normal" selected>ふつう</option>
+          <option value="hard">むずかしい</option>
+        </select>
+      </label>
+      <button id="startBtn">開始</button>
+      <button id="resetBtn" disabled>リスタート</button>
+    </div>
+    <div class="stats">
+      <span>スコア：<strong id="score">0</strong></span>
+      <span>ベスト：<strong id="best">–</strong></span>
+      <span>状態：<strong id="state">待機中</strong></span>
+    </div>
+  </header>
+
+  <main>
+    <canvas id="game" width="960" height="540" aria-label="糸通しゲームキャンバス"></canvas>
+    <div id="message" role="status" aria-live="polite"></div>
+  </main>
+
+  <footer>
+    <small>操作：マウス/タッチ長押しで上昇、離すと下降。</small>
+  </footer>
+
+  <script src="./game.js"></script>
+</body>
+</html>
