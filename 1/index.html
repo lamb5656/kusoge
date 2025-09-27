@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Gate Runner: Choice Shooter</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="game-root">
+    <canvas id="game"></canvas>
+
+    <div id="hud">
+      <div class="badge" id="power">Power: 0</div>
+      <div class="badge" id="rapid">Rapid Lv: 0</div>
+      <div class="badge" id="score">Score: 0</div>
+      <div class="badge" id="best">Best: 0</div>
+    </div>
+
+    <div id="overlay" class="show">
+      <div class="panel">
+        <h1>Gate Runner</h1>
+        <p>Hold to shoot. Each bullet's damage = your current <b>Power</b>.<br>
+        Rows spawn two walls side-by-side (choose which to break).<br>
+        <b>+</b> walls increase Power, <b>-</b> walls decrease Power.<br>
+        <b>R+</b>/<b>R-</b> walls raise/lower fire rate.</p>
+        <button id="startBtn">Tap to Start</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
