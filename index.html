@@ -2,45 +2,40 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KUSOGE – ミニゲーム集</title>
-  <meta name="description" content="ブラウザで遊べるミニ(クソ)ゲームリンク集 (/kusoge/1, /kusoge/2, /kusoge/3)" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>糸通し（押すと上昇・離すと下降）</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
+  <header>
+    <h1>糸通し</h1>
+    <div class="controls">
+      <label>難易度
+        <select id="difficulty">
+          <option value="easy">かんたん</option>
+          <option value="normal" selected>ふつう</option>
+          <option value="hard">むずかしい</option>
+        </select>
+      </label>
+      <button id="startBtn">開始</button>
+      <button id="resetBtn" disabled>リスタート</button>
+    </div>
+    <div class="stats">
+      <span>スコア：<strong id="score">0</strong></span>
+      <span>ベスト：<strong id="best">–</strong></span>
+      <span>状態：<strong id="state">待機中</strong></span>
+    </div>
+  </header>
+
   <main>
-    <header>
-      <h1>KUSOGE ミニゲーム集</h1>
-      <p class="sub">短時間で遊べるブラウザゲームへのリンクです。ルールの概要も各カードに表示しています。</p>
-    </header>
-
-    <nav class="grid" aria-label="ゲーム一覧">
-      <a class="card" href="./1/" aria-label="Gate Runner を開く">
-        <div class="eyebrow">アクション / シューティング</div>
-        <div class="title">Gate Runner（ゲートランナー）</div>
-        <p class="desc">画面長押しで射撃。横並びの壁をどちらか破壊して前進。<span class="mono">+</span>でパワー上昇、<span class="mono">−</span>で減少。<span class="mono">R+/R−</span>で連射速度を調整。スコアとベスト記録あり。</p>
-        <div class="path">/kusoge/1/</div>
-      </a>
-
-      <a class="card" href="./2/" aria-label="クリックゲーム を開く">
-        <div class="eyebrow">クリッカー / 放置</div>
-        <div class="title">クリックゲーム</div>
-        <p class="desc">クリックでポイントを獲得し、<em>アップグレード</em>や<em>ワーカー</em>で生産を強化。<em>スペシャル</em>や<em>プレステージ</em>要素、実績とデータの保存・読み込み・エクスポート/インポートにも対応(してる箇所もある)。</p>
-        <div class="path">/kusoge/2/</div>
-      </a>
-
-      <a class="card" href="./3/" aria-label="Endless Tower を開く">
-        <div class="eyebrow">タワー / プロトタイプ</div>
-        <div class="title">Endless Tower（エンドレスタワー）</div>
-        <p class="desc">タワーを登って強化していく試作版。現状はタイトルと強化メニューの準備段階です(永遠に)。</p>
-        <div class="path">/kusoge/3/</div>
-      </a>
-    </nav>
-
-    <footer>
-      <small>Hosted on GitHub Pages</small>
-    </footer>
+    <canvas id="game" width="960" height="540" aria-label="糸通しゲームキャンバス"></canvas>
+    <div id="message" role="status" aria-live="polite"></div>
   </main>
+
+  <footer>
+    <small>操作：マウス/タッチ長押しで上昇、離すと下降。</small>
+  </footer>
+
+  <script src="./game.js"></script>
 </body>
 </html>
