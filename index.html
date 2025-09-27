@@ -3,102 +3,43 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>kusoge – Links</title>
-  <meta name="description" content="Quick links to /kusoge/1, /kusoge/2, /kusoge/3" />
-  <style>
-    :root {
-      color-scheme: light dark;
-      --bg: #0b0b0c;
-      --panel: rgba(255,255,255,0.06);
-      --text: #eaeaea;
-      --accent: #7dd3fc;
-      --accent-2: #a78bfa;
-    }
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #f7f7fb;
-        --panel: rgba(0,0,0,0.06);
-        --text: #18181b;
-      }
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans JP, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 800px at 10% 10%, var(--panel), transparent 60%),
-                  radial-gradient(1200px 800px at 90% 90%, var(--panel), transparent 60%),
-                  var(--bg);
-      color: var(--text);
-      display: grid;
-      place-items: center;
-      padding: 24px;
-    }
-    main {
-      width: min(960px, 100%);
-    }
-    header { text-align: center; margin-bottom: 20px; }
-    h1 { margin: 0 0 8px; letter-spacing: 0.02em; font-weight: 800; font-size: clamp(28px, 4vw, 44px); }
-    p.sub { opacity: 0.7; margin: 0; }
-
-    nav.grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-top: 24px;
-    }
-    a.card {
-      display: block;
-      padding: 22px 20px;
-      border-radius: 16px;
-      text-decoration: none;
-      border: 1px solid rgba(0,0,0,0.08);
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
-      color: var(--text);
-    }
-    a.card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.10);
-      border-color: rgba(125, 211, 252, 0.6);
-    }
-    .card .path { font-size: 14px; opacity: 0.7; }
-    .card .title { margin-top: 6px; font-size: 18px; font-weight: 700; letter-spacing: .02em; }
-
-    footer { margin-top: 28px; text-align: center; opacity: .6; font-size: 12px; }
-
-    @media (prefers-reduced-motion: reduce) {
-      a.card, a.card:hover { transition: none; transform: none; }
-    }
-  </style>
+  <title>KUSOGE – ミニゲーム集</title>
+  <meta name="description" content="ブラウザで遊べるミニ(クソ)ゲームリンク集 (/kusoge/1, /kusoge/2, /kusoge/3)" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <main>
     <header>
-      <h1>kusoge</h1>
-      <p class="sub">Choose a page</p>
+      <h1>KUSOGE ミニゲーム集</h1>
+      <p class="sub">短時間で遊べるブラウザゲームへのリンクです。ルールの概要も各カードに表示しています。</p>
     </header>
 
-    <nav class="grid">
-      <a class="card" href="/kusoge/1/">
+    <nav class="grid" aria-label="ゲーム一覧">
+      <a class="card" href="./1/" aria-label="Gate Runner を開く">
+        <div class="eyebrow">アクション / シューティング</div>
+        <div class="title">Gate Runner（ゲートランナー）</div>
+        <p class="desc">画面長押しで射撃。横並びの壁をどちらか破壊して前進。<span class="mono">+</span>でパワー上昇、<span class="mono">−</span>で減少。<span class="mono">R+/R−</span>で連射速度を調整。スコアとベスト記録あり。</p>
         <div class="path">/kusoge/1/</div>
-        <div class="title">Page 1</div>
       </a>
-      <a class="card" href="/kusoge/2/">
+
+      <a class="card" href="./2/" aria-label="クリックゲーム を開く">
+        <div class="eyebrow">クリッカー / 放置</div>
+        <div class="title">クリックゲーム</div>
+        <p class="desc">クリックでポイントを獲得し、<em>アップグレード</em>や<em>ワーカー</em>で生産を強化。<em>スペシャル</em>や<em>プレステージ</em>要素、実績とデータの保存・読み込み・エクスポート/インポートにも対応(してる箇所もある)。</p>
         <div class="path">/kusoge/2/</div>
-        <div class="title">Page 2</div>
       </a>
-      <a class="card" href="/kusoge/3/">
+
+      <a class="card" href="./3/" aria-label="Endless Tower を開く">
+        <div class="eyebrow">タワー / プロトタイプ</div>
+        <div class="title">Endless Tower（エンドレスタワー）</div>
+        <p class="desc">タワーを登って強化していく試作版。現状はタイトルと強化メニューの準備段階です(永遠に)。</p>
         <div class="path">/kusoge/3/</div>
-        <div class="title">Page 3</div>
       </a>
     </nav>
 
     <footer>
-      Hosted on GitHub Pages
+      <small>Hosted on GitHub Pages</small>
     </footer>
   </main>
 </body>

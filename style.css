@@ -1,0 +1,72 @@
+:root {
+  color-scheme: light dark;
+  --bg: #0b0b0c;
+  --panel: rgba(255,255,255,0.06);
+  --text: #eaeaea;
+  --muted: #b5b5b5;
+  --border: rgba(255,255,255,0.12);
+  --accent: #7dd3fc; /* cyan-300 */
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f7fb;
+    --panel: rgba(0,0,0,0.04);
+    --text: #18181b;
+    --muted: #5e5e5e;
+    --border: rgba(0,0,0,0.12);
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans JP, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background:
+    radial-gradient(1200px 800px at 10% 10%, var(--panel), transparent 60%),
+    radial-gradient(1200px 800px at 90% 90%, var(--panel), transparent 60%),
+    var(--bg);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+main { width: min(960px, 100%); }
+header { text-align: center; margin-bottom: 20px; }
+h1 { margin: 0 0 8px; letter-spacing: 0.02em; font-weight: 800; font-size: clamp(28px, 4vw, 44px); }
+.sub { opacity: 0.78; margin: 0; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.card {
+  display: block;
+  padding: 22px 20px;
+  border-radius: 16px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+  color: var(--text);
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+  border-color: rgba(125, 211, 252, 0.6);
+}
+.eyebrow { font-size: 12px; opacity: 0.75; letter-spacing: .04em; text-transform: uppercase; }
+.title { margin-top: 6px; font-size: 18px; font-weight: 800; letter-spacing: .02em; }
+.desc { margin: 8px 0 12px; line-height: 1.6; opacity: 0.92; }
+.path { font-size: 13px; color: var(--muted); }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+footer { margin-top: 28px; text-align: center; opacity: .6; font-size: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .card:hover { transition: none; transform: none; }
+}
