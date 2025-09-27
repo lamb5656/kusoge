@@ -1,0 +1,108 @@
+:root{
+  --bg: #0f1222;
+  --card: #171a2b;
+  --accent: #7aa2ff;
+  --accent-2: #8be9fd;
+  --text: #eef2ff;
+  --muted: #a7b0c0;
+  --danger: #ff6b6b;
+}
+*{ box-sizing: border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 20% -20%, #1b2040 0%, transparent 60%) no-repeat,
+    radial-gradient(1200px 600px at 120% 0%, #1a2a55 0%, transparent 60%) no-repeat,
+    var(--bg);
+}
+.header{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:20px clamp(16px,4vw,40px);
+  position:sticky; top:0; backdrop-filter: blur(6px);
+}
+.header h1{ margin:0; letter-spacing:.03em; }
+.stats{ display:flex; gap:18px; color: var(--accent-2); font-weight:600; }
+.container{
+  max-width: 980px; margin: 0 auto;
+  padding: 24px clamp(16px,4vw,40px) 80px;
+  display:grid; gap:28px;
+}
+.play{
+  display:grid; place-items:center;
+  padding: 24px; background: linear-gradient(180deg,#151933, #121528);
+  border: 1px solid #23284a; border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+.big-btn{
+  font-size: clamp(22px, 4vw, 36px);
+  padding: clamp(18px, 3.4vw, 26px) clamp(32px, 6vw, 56px);
+  border-radius: 999px; border: 2px solid #2a3260;
+  background: radial-gradient(120% 120% at 50% 0%, #27336b, #1c2452);
+  color: #fff; cursor: pointer;
+  box-shadow: 0 12px 0 #0a0f2a, 0 24px 40px rgba(0,0,0,.45);
+  transform: translateY(0);
+  transition: transform .06s ease, box-shadow .06s ease, filter .12s ease;
+  user-select: none; outline: none;
+}
+.big-btn:active{
+  transform: translateY(6px);
+  box-shadow: 0 6px 0 #0a0f2a, 0 16px 32px rgba(0,0,0,.5);
+  filter: brightness(1.05);
+}
+.float-layer{ position: relative; width: 100%; height: 0; overflow: visible; }
+.float-chip{
+  position: absolute; left: 50%; transform: translateX(-50%); top: -10px;
+  padding: 6px 10px; font-weight: 700;
+  background: rgba(123,162,255,.14); border: 1px solid rgba(123,162,255,.6);
+  color: var(--accent-2); border-radius: 999px; pointer-events: none; opacity: 0;
+  animation: floatUp 900ms ease forwards; text-shadow: 0 0 12px rgba(139,233,253,.5);
+}
+@keyframes floatUp{
+  0%{ transform: translate(-50%, 8px); opacity: 0; }
+  25%{ opacity: 1; }
+  100%{ transform: translate(-50%, -36px); opacity: 0; }
+}
+.shop .cards{
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:16px;
+}
+.card{
+  background: var(--card); border: 1px solid #242a4d; border-radius: 16px;
+  padding: 16px; box-shadow: 0 10px 24px rgba(0,0,0,.25);
+}
+.card h3{ margin-top: 6px; }
+.card p{ color: var(--muted); margin: 8px 0; }
+.card .price{ color: var(--accent); font-weight:700; }
+.card button{
+  margin-top: 10px; width: 100%; padding: 10px 14px; border-radius: 10px;
+  border: 1px solid #2a3260; background: linear-gradient(180deg,#202653,#1a2246);
+  color: #fff; cursor: pointer; font-weight:700;
+}
+.card button:disabled{ opacity:.55; cursor:not-allowed; filter: grayscale(0.3); }
+.owned{ margin-top:10px; display:flex; flex-wrap:wrap; gap:18px; color: var(--muted); }
+.manage .buttons{ display:flex; flex-wrap: wrap; gap: 10px; }
+.manage button{
+  padding: 8px 14px; border-radius: 10px; border:1px solid #2a3260;
+  background: #1a2246; color:#fff; cursor:pointer; font-weight:600;
+}
+.manage .danger{ background:#2a0f16; border-color:#57161f; color:#ffd4d4; }
+.manage .note{ color: var(--muted); }
+.achievements{ list-style: none; padding:0; margin: 0; display:grid; gap:8px; }
+.achievements li{
+  background: #131734; border:1px solid #263064; padding:10px 12px; border-radius:10px;
+}
+.footer{ text-align:center; color: #94a3b8; padding:30px 10px 50px; }
+@media (hover:hover){
+  .card button:hover, .manage button:hover{ filter: brightness(1.1); }
+  .big-btn:hover{ filter: brightness(1.08); }
+}
+
+/* === additions for AUTO toggle === */
+.card .row{ display:flex; gap:8px; }
+.card .row > button{ flex:1; }
+.card .auto-toggle.on{
+  background: linear-gradient(180deg,#214a2c,#1a3c23);
+  border-color:#2b7a42;
+}

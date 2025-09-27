@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>クリックゲーム</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <meta name="description" content="Clicker game for GitHub Pages (workers x18 + prestige)" />
+</head>
+<body>
+  <header class="header">
+    <h1>クリックゲーム</h1>
+    <div class="stats">
+      <div><span id="points">0</span> pt</div>
+      <div>毎秒: <span id="perSec">0</span></div>
+      <div>1クリック: <span id="perClick">1</span></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="play">
+      <button id="clickBtn" class="big-btn" aria-label="クリックしてポイントを獲得">クリック！</button>
+      <div id="floatLayer" class="float-layer" aria-hidden="true"></div>
+    </section>
+
+    <section class="shop">
+      <h2>アップグレード</h2>
+      <div id="upgrades" class="cards"></div>
+
+      <h2>ワーカー</h2>
+      <div id="workers" class="cards"></div>
+
+      <h2>スペシャル</h2>
+      <div id="specials" class="cards"></div>
+
+      <h2>プレステージ</h2>
+      <div id="prestige" class="cards"></div>
+
+      <div class="owned">
+        <span>パワーLv: <strong id="lvlClickPower">1</strong></span>
+        <span>クリ率: <strong id="critPercent">1%</strong></span>
+        <span>クリ倍率: <strong id="critX">×10</strong></span>
+        <span>ゴールデン率: <strong id="goldenPercent">0.10%</strong></span>
+        <span>研究: <strong id="researchBonus">+0%</strong></span>
+        <span>オフライン上限: <strong id="offlineCap">10分</strong></span>
+        <span>ワーカー数: <strong id="workersCount">0</strong></span>
+        <span>フィーバー: <strong id="feverStatus">OFF</strong></span>
+        <span>月光石: <strong id="prestigeShards">0</strong></span>
+        <span>恒久倍率: <strong id="prestigeMult">×1.00</strong></span>
+      </div>
+    </section>
+
+    <section class="manage">
+      <h2>データ</h2>
+      <div class="buttons">
+        <button id="saveBtn">保存</button>
+        <button id="loadBtn">読み込み</button>
+        <button id="exportBtn">エクスポート</button>
+        <button id="importBtn">インポート</button>
+        <button id="resetBtn" class="danger">リセット</button>
+      </div>
+      <p class="note">自動保存は数秒ごとに行われます。別端末へ移す場合はエクスポート/インポートをご利用ください。</p>
+    </section>
+
+    <section class="achv">
+      <h2>実績</h2>
+      <ul id="achievements" class="achievements"></ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© 2025 Clicker Modular on GitHub Pages</small>
+  </footer>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
