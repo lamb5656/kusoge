@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title>Gate Runner: Choice Shooter</title>
+  <title>Gate Runner（ゲートランナー） - 選択型シューティング</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="description" content="長押しでショット。左右どちらの壁を壊すか選びながら進む、選択型のミニシューティング。+でパワー上昇、-で低下。R+/R-で連射速度が上下します。">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,20 +12,22 @@
     <canvas id="game"></canvas>
 
     <div id="hud">
-      <div class="badge" id="power">Power: 0</div>
-      <div class="badge" id="rapid">Rapid Lv: 0</div>
-      <div class="badge" id="score">Score: 0</div>
-      <div class="badge" id="best">Best: 0</div>
+      <div class="badge" id="power">パワー: 0</div>
+      <div class="badge" id="rapid">連射Lv: 0</div>
+      <div class="badge" id="score">スコア: 0</div>
+      <div class="badge" id="best">ベスト: 0</div>
     </div>
 
     <div id="overlay" class="show">
       <div class="panel">
-        <h1>Gate Runner</h1>
-        <p>Hold to shoot. Each bullet's damage = your current <b>Power</b>.<br>
-        Rows spawn two walls side-by-side (choose which to break).<br>
-        <b>+</b> walls increase Power, <b>-</b> walls decrease Power.<br>
-        <b>R+</b>/<b>R-</b> walls raise/lower fire rate.</p>
-        <button id="startBtn">Tap to Start</button>
+        <h1>Gate Runner（ゲートランナー）</h1>
+        <p>
+          長押しでショット。弾のダメージは現在の<b>パワー</b>に等しい。<br>
+          画面には横一列で左右2つの壁が出現します（どちらを壊すか選んで進みます）。<br>
+          <b>+</b>の壁はパワー上昇、<b>-</b>の壁はパワー低下。<br>
+          <b>R+</b>/<b>R-</b>の壁は連射速度がそれぞれ上昇/低下します。
+        </p>
+        <button id="startBtn">タップで開始</button>
       </div>
     </div>
   </div>
