@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>タワーディフェンス Plus</title>
+  <link rel="preload" href="./styles/style.css" as="style">
+  <link rel="stylesheet" href="./styles/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>タワーディフェンス <small>Plus</small></h1>
+  
+    <div class="stats stats--cards">
+      <div class="stat">
+        <span class="label">ゴールド</span>
+        <span id="gold" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">ライフ</span>
+        <span id="lives" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">ウェーブ</span>
+        <span id="wave" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">敵</span>
+        <span id="enemies" class="value">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">FPS</span>
+        <span id="fps" class="value">--</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- 左：ショップ -->
+    <aside class="panel panel--shop">
+      <h2>ショップ</h2>
+      <div id="shopList" class="shop-list"></div>
+
+      <div class="controls mt8">
+        <button id="btnPlace" class="primary">配置モード</button>
+        <button id="btnSell" class="ghost">売却モード</button>
+        <button id="btnStartWave">ウェーブ開始</button>
+        <button id="btnSpeed">速度: 1x</button>
+        <button id="btnPause" class="ghost">一時停止</button>
+        <button id="btnReset" class="danger">リセット</button>
+      </div>
+
+      <details class="mt8">
+        <summary>遊び方</summary>
+        <ul class="help">
+          <li>ショップで塔の「設置」を選び、キャンバス上をタップ/クリックで配置</li>
+          <li>道の上には設置できません（濃い帯）</li>
+          <li>アップグレードはショップの「全UP」でタイプ全体に適用</li>
+          <li>ウェーブ開始で敵が出現。5の倍数ウェーブでボス登場</li>
+        </ul>
+      </details>
+    </aside>
+
+    <!-- 中央：ステージ -->
+    <section class="stage">
+      <canvas id="game" width="960" height="540" aria-label="ゲームキャンバス"></canvas>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+    </section>
+
+    <!-- 右：全砲台ステータス（常時表示・一覧） -->
+    <aside class="panel panel--inspector">
+      <h2>全砲台ステータス</h2>
+      <div id="fleet" class="fleet">
+        <div class="inspect-row"><strong>キャノン</strong>
+          <span>レベル <span id="fleet-cannon-lv">1</span></span>
+          <span>DPS目安 <span id="fleet-cannon-dps">0</span></span>
+          <span>射程 <span id="fleet-cannon-range">0</span></span>
+        </div>
+        <div class="inspect-row"><strong>ボム</strong>
+          <span>レベル <span id="fleet-bomb-lv">1</span></span>
+          <span>DPS目安 <span id="fleet-bomb-dps">0</span></span>
+          <span>射程 <span id="fleet-bomb-range">0</span></span>
+        </div>
+        <div class="inspect-row"><strong>アイス</strong>
+          <span>レベル <span id="fleet-ice-lv">1</span></span>
+          <span>DPS目安 <span id="fleet-ice-dps">0</span></span>
+          <span>射程 <span id="fleet-ice-range">0</span></span>
+        </div>
+        <div class="inspect-row"><strong>ポイズン</strong>
+          <span>レベル <span id="fleet-poison-lv">1</span></span>
+          <span>DPS目安 <span id="fleet-poison-dps">0</span></span>
+          <span>射程 <span id="fleet-poison-range">0</span></span>
+        </div>
+        <div class="inspect-row"><strong>スナイパー</strong>
+          <span>レベル <span id="fleet-sniper-lv">1</span></span>
+          <span>DPS目安 <span id="fleet-sniper-dps">0</span></span>
+          <span>射程 <span id="fleet-sniper-range">0</span></span>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <footer class="site-footer">
+    <small>© 2025 Tower Defense Plus</small>
+  </footer>
+
+  <script type="module" src="./scripts/main.js"></script>
+</body>
+</html>

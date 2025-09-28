@@ -1,0 +1,203 @@
+:root{
+  --bg:#0b0e14; --panel:#111826; --panel-2:#0f172a; --text:#e5e7eb; --muted:#9ca3af;
+  --accent:#22d3ee; --accent-2:#60a5fa; --danger:#ef4444; --ok:#34d399; --grid:#1f2937;
+  --path:#334155; --path-2:#475569; --tower:#a78bfa; --bullet:#fde68a; --enemy:#f97316;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:linear-gradient(180deg,#0b0e14,#0b1220 60%,#0b0e14);
+  color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial
+}
+.site-header,.site-footer{
+  max-width:1300px; margin:0 auto; padding:12px 16px;
+  display:flex; align-items:center; justify-content:space-between
+}
+.site-header h1{font-size:20px; margin:0}
+.stats{display:flex; gap:12px; color:var(--muted)}
+.stats span{background:#0b1220; padding:6px 10px; border-radius:10px; border:1px solid #1f2937}
+
+/* ===== Header Compact Override ===== */
+.site-header{
+  max-width:1300px;
+  margin:0 auto;
+  padding:8px 12px;                 /* 小さめ余白 */
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap:8px;                          /* ヘッダー内のすき間を縮める */
+  align-items:center;
+}
+.site-header h1{
+  margin:0;
+  font-size:16px;                   /* タイトル小さく */
+  line-height:1.1;
+  letter-spacing:.02em;
+  font-weight:700;
+}
+.site-header h1 small{ font-size:.65em; opacity:.7; margin-left:.25em }
+
+.stats--cards{
+  display:grid;
+  grid-template-columns: repeat(5, minmax(92px, 1fr)); /* カード幅も小さく */
+  gap:6px;                                            /* カード間を詰める */
+}
+@media (max-width: 900px){
+  .stats--cards{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+.stat{
+  background:#0b1220;
+  border:1px solid #1f2937;
+  border-radius:10px;               /* 角を少しだけ丸く */
+  padding:6px 8px;                  /* カード内余白を縮める */
+  box-shadow:none;                  /* 影をオフでスッキリ */
+  min-width:0;
+}
+.stat .label{
+  display:block;
+  color:var(--muted);
+  font-size:10px;                   /* ラベル小さく */
+  line-height:1;
+  white-space:nowrap;
+  letter-spacing:.02em;
+}
+.stat .value{
+  display:block;
+  margin-top:2px;                   /* 数字との間隔を短く */
+  font-size:14px;                   /* 数字も小さく */
+  font-weight:700;
+  line-height:1.1;
+  color:var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* 旧ヘッダー用の .stats span スタイルは無効化（残っててもOK） */
+.stats.stats--cards span{ background:none; border:none; padding:0; border-radius:0 }
+
+.layout{
+  max-width:1300px; margin:8px auto 20px; padding:0 16px;
+  display:grid; grid-template-columns: 300px 1fr 320px; gap:16px
+}
+.panel{background:var(--panel); border:1px solid #1f2937; border-radius:14px; padding:14px; box-shadow:0 4px 20px rgba(0,0,0,.25)}
+.panel h2{margin:4px 0 12px}
+
+button{
+  appearance:none; border:none; padding:10px 12px; border-radius:12px;
+  cursor:pointer; color:#0b0e14; background:var(--text); font-weight:600;
+  transition:transform .05s ease, box-shadow .25s ease, background .3s ease
+}
+button:hover{transform:translateY(-1px)} button:active{transform:translateY(0)}
+button.primary{background:linear-gradient(180deg,var(--accent),var(--accent-2)); color:#031225}
+button.ghost{background:#111827; color:var(--text); border:1px solid #1f2937}
+button.danger{background:linear-gradient(180deg,#f87171,var(--danger)); color:#360707}
+
+.help{margin:6px 0 0 14px; color:var(--muted)}
+.help li{margin:6px 0}
+
+.stage{
+  position:relative; background:var(--panel-2); border:1px solid #1f2937; border-radius:16px;
+  padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.35)
+}
+canvas{
+  width:100%; height:auto; display:block; border-radius:12px;
+  background: radial-gradient(1000px 400px at 50% -200px, #0f172a, #0b0e14 70%)
+}
+.toast{
+  position:absolute; left:50%; top:14px; transform:translateX(-50%);
+  background:#0b1220; color:var(--text); border:1px solid #1f2937;
+  padding:8px 12px; border-radius:10px; opacity:0; pointer-events:none;
+  transition:opacity .25s ease, transform .25s ease
+}
+.tooltip{position:absolute; padding:8px 10px; background:#111827; border:1px solid #1f2937; border-radius:10px; font-size:12px; color:var(--text); pointer-events:none}
+
+.muted{color:var(--muted)}
+.mt8{margin-top:8px}
+.site-footer{opacity:.6}
+
+/* ========== SHOP（縦レイアウトでスッキリ） ========== */
+.shop-list{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap:12px;
+}
+.shop-item{
+  display:grid;
+  grid-template-rows:auto auto auto;   /* タイトル / 説明 / ボタン */
+  gap:6px;
+  padding:12px;
+  border-radius:12px; border:1px solid #1f2937; background:#0b1220;
+}
+.shop-item .meta{ display:block; }
+.badge{font-size:12px; padding:2px 8px; border-radius:999px; background:#111827; border:1px solid #1f2937; margin-right:6px}
+.shop-actions{
+  display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:4px;
+}
+.shop-actions .btn-mini{
+  padding:10px 12px; border-radius:10px; font-size:12px;
+  border:1px solid #1f2937; background:#111827; color:#e5e7eb;
+}
+.shop-actions .btn-mini.up{
+  background:linear-gradient(180deg,var(--accent),var(--accent-2)); color:#031225; border:none;
+}
+
+/* ========== インスペクタ共通 ========== */
+.panel--inspector .inspect{display:grid; gap:8px}
+.inspect-row{
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px dashed #1f2937; padding:6px 0
+}
+.inspect-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+
+/* ========== モバイル最適化 ========== */
+:root { --bar-bg: rgba(17, 24, 39, 0.88); }
+button { min-height: 44px; }
+canvas { touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; }
+
+@media (max-width: 1100px){ .layout{grid-template-columns:1fr;} }
+
+@media (max-width: 900px){
+  /* 1カラムにしてステージを最上段に */
+  .layout{ grid-template-columns: 1fr; gap: 12px; }
+  .stage{ order: 1; }
+  .panel--shop{ order: 2; }
+  .panel--inspector{ order: 3; }
+
+  /* 下部固定バー（操作ボタン） */
+  .panel--shop .controls{
+    position: fixed; left: 12px; right: 12px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+    background: var(--bar-bg); backdrop-filter: blur(6px);
+    border: 1px solid #1f2937; border-radius: 14px; padding: 8px;
+    z-index: 50; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .panel--shop .controls button{ min-height: 46px; font-size: 14px; }
+
+  /* 下部バーに隠れない“確実な余白”を、実際にスクロールする main に付与 */
+  main.layout{
+    padding-bottom: calc(120px + constant(safe-area-inset-bottom)); /* 旧Safari用 */
+    padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); /* 現行用（上書き） */
+  }
+
+  /* モバイルはショップ1列で読みやすく */
+  .shop-list{ grid-template-columns: 1fr; gap:10px; }
+
+  /* ホバー不可なのでツールチップは隠す */
+  .tooltip{ display: none !important; }
+}
+
+/* ===== 全砲台一覧 ===== */
+.tower-list{
+  display:grid; gap:8px;
+  max-height:420px; overflow:auto; padding-right:4px;
+}
+.tower-item{
+  padding:8px; border-radius:10px;
+  border:1px solid #1f2937; background:#0b1220;
+}
+.tower-item .ti-name{ display:flex; gap:6px; align-items:center; }
+.tower-item .ti-meta{ font-size:12px; }
+.tower-item.selected{ outline:2px solid var(--accent); border-color:transparent; }
+@media (max-width:900px){
+  .tower-list{ max-height:none; }
+}
