@@ -1,0 +1,50 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #0b0f14; color: #eaf2ff; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  display: grid; grid-template-columns: repeat(7, minmax(0,1fr));
+  gap: 10px; padding: 8px 12px;
+  background: rgba(9,13,18,0.8); backdrop-filter: blur(6px); border-bottom: 1px solid #1a2430;
+}
+.stat .label { font-size: 12px; opacity: 0.75; }
+.stat .value { font-size: 18px; font-weight: 700; letter-spacing: 0.3px; }
+
+main { position: relative; width: 100%; height: calc(100% - 64px); display: grid; grid-template-columns: 1fr 320px; }
+
+#game { width: 100%; height: 100%; display: block; background: radial-gradient(1200px 700px at 60% 40%, #0f1620, #070a0e 60%); }
+
+.panel {
+  padding: 14px; border-left: 1px solid #1a2430; background: linear-gradient(180deg, rgba(17,24,33,0.8), rgba(10,15,22,0.8));
+  overflow: auto;
+}
+
+button {
+  width: 100%;
+  border: 1px solid #243245;
+  background: linear-gradient(180deg, #1b2737, #142033);
+  color: #eaf2ff; border-radius: 12px; padding: 12px;
+  font-weight: 700; cursor: pointer; margin-bottom: 10px;
+  transition: transform .05s ease, box-shadow .2s ease, border-color .2s ease;
+}
+button:hover { border-color: #3b5171; box-shadow: 0 6px 20px rgba(28,80,255,0.15); }
+button:active { transform: translateY(1px) scale(0.99); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.shop { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 6px; }
+.shop small { opacity: 0.7; font-weight: 600; }
+
+.card { border: 1px solid #223045; border-radius: 12px; padding: 12px; margin-top: 10px; background: rgba(18,26,38,0.6); }
+.card-title { font-weight: 800; margin-bottom: 8px; font-size: 14px; opacity: 0.9; }
+
+.segments { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+.seg { padding: 10px; border-radius: 10px; font-weight: 800; }
+.seg.active { outline: 2px solid #4aa3ff; }
+
+.hint { font-size: 12px; line-height: 1.6; opacity: 0.85; margin-top: 6px; }
+
+.center-clear {
+  position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none;
+  font-size: 56px; font-weight: 900; letter-spacing: 1px;
+  color: rgba(255,220,120,0.9); text-shadow: 0 0 30px rgba(255,200,60,0.4);
+}

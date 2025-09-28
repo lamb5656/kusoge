@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chain Reactor - Center Target</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="stat">
+      <div class="label">合計連鎖</div>
+      <div id="total" class="value">0</div>
+    </div>
+    <div class="stat">
+      <div class="label">毎秒（連鎖）</div>
+      <div id="perSec" class="value">0</div>
+    </div>
+    <div class="stat">
+      <div class="label">分裂数 k</div>
+      <div id="kVal" class="value">2</div>
+    </div>
+    <div class="stat">
+      <div class="label">密度</div>
+      <div id="densityVal" class="value">1.00×</div>
+    </div>
+    <div class="stat">
+      <div class="label">速度</div>
+      <div id="speedVal" class="value">1.00×</div>
+    </div>
+    <div class="stat">
+      <div class="label">中央残量</div>
+      <div id="centerRemain" class="value">0</div>
+    </div>
+    <div class="stat">
+      <div class="label">DPS（毎秒減少）</div>
+      <div id="dps" class="value">0</div>
+    </div>
+  </header>
+
+  <main>
+    <canvas id="game"></canvas>
+    <div class="panel">
+      <button id="ignite">点火（クリック／ドラッグで種を撒く）</button>
+
+      <div class="card">
+        <div class="card-title">アップグレード</div>
+        <div class="shop">
+          <button id="upK">分裂数 +1<br><small id="upKCost">コスト: 10</small></button>
+          <button id="upDensity">密度 +10%<br><small id="upDensityCost">コスト: 25</small></button>
+          <button id="upSpeed">速度 +10%<br><small id="upSpeedCost">コスト: 25</small></button>
+          <button id="fever" disabled>フィーバー発動！<br><small id="feverInfo">0 / 100</small></button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">中央ターゲット</div>
+        <div class="segments">
+          <button class="seg" data-init="1000000">1e6</button>
+          <button class="seg" data-init="100000000">1e8</button>
+          <button class="seg" data-init="10000000000">1e10</button>
+          <button class="seg" data-init="1000000000000">1e12</button>
+        </div>
+        <button id="resetTarget">リセット（現在の初期値に戻す）</button>
+        <p class="hint">
+          画面中央の大きな球に玉が当たると<strong>残量</strong>が減ります。<br/>
+          DPSは「1秒あたりの減少量」です。狙って当てるほど気持ちよく数字が溶けます。
+        </p>
+      </div>
+
+      <p class="hint">
+        序盤：点火＋ドラッグで粒子を出し、中央を狙って当ててみましょう。<br/>
+        強化：分裂数k・密度・速度を上げると指数的に伸び、DPSが跳ね上がります。<br/>
+        フィーバー：メーター100で発動、一定時間k×3。
+      </p>
+    </div>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
