@@ -11,22 +11,26 @@ import {
 } from './pile.js';
 
 function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  const cssW = rect.width;
-  const rawH = rect.height;
-  const cssH = Math.min(rawH, CONFIG.canvasMaxHeightPx || rawH); // 上限を適用
+  // 親要素の横幅を使ってレイアウト（高さは上限でクランプ）
+  const parent = canvas.parentElement || document.body;
+  const cssW = Math.floor(parent.clientWidth);
+  const rawH = Math.floor(parent.clientHeight || window.innerHeight);
 
+  const cssH = Math.min(rawH, CONFIG.canvasMaxHeightPx || rawH);
+
+  // ★ 見た目サイズをここで固定（これをしないと伸び続ける）
+  canvas.style.width  = cssW + 'px';
+  canvas.style.height = cssH + 'px';
+
+  // 内部解像度（DPR対応）
   canvas.width  = Math.floor(cssW * DPR);
   canvas.height = Math.floor(cssH * DPR);
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-  // 地面の位置も CSS 高さ基準で更新
+  // 地面の位置＆ハイトマップを更新
   state.groundY = cssH - 20;
-
-  // ハイトマップも同じ横幅と新しい地面Yでリサイズ
   resizePile(cssW, state.groundY);
 }
-
 
 function buildSoftNodes(r) {
   state.sphere.nodes = [];

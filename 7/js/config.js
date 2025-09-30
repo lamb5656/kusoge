@@ -71,6 +71,8 @@ export const CONFIG = {
   // 地形クランプ（面押し戻し）
   surfaceClampEps: 1.0,
 
+  canvasMaxHeightPx: 520,
+
   // ★ 追加：クリップ（侵食）で削れた塩 → 玉のダメージ換算
   erosionShrinkPerPx: 0.02,       // 削れた“高さpx”あたりの玉半径の減少量
   erosionShrinkMinTriggerPx: 0.6  // このフレーム合計で削れ量がこの値を超えたら適用
