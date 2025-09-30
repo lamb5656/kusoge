@@ -205,16 +205,6 @@ async function build(){
 }
 
 scanBtn.addEventListener("click", build);
-exportBtn.addEventListener("click", () => {
-  const items = window.__currentItems || [];
-  const payload = JSON.stringify({ items }, null, 2);
-  const blob = new Blob([payload], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "list.json";
-  a.click();
-  URL.revokeObjectURL(a.href);
-});
 
 // 初回ビルド
 build();
