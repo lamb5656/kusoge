@@ -234,7 +234,7 @@ async function build(){
   const base = baseInput.value;
   const maxN = Math.max(1, Number(maxInput.value||20));
   const hint = document.getElementById("hint");
-  hint.textContent = "読み込み中…（list.json を探し、なければ "+base+"1.."+maxN+" をスキャン）";
+  hint.textContent = "読み込み中… "+base+"1.."+maxN+" をスキャン）";
 
   // 1) list.json 優先
   let items = await tryLoadListJson(base);
