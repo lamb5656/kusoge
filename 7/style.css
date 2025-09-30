@@ -67,3 +67,10 @@ html, body {
   border-radius: 8px;
   pointer-events: none;
 }
+
+/* キャンバスの見た目サイズ（縦を固定 or 縮める） */
+canvas {
+  height: 520px;        /* ← ここを小さくすると縦が縮む（例: 520px）*/
+  width: 100%;          /* 横は親幅に合わせる */
+  display: block;
+}

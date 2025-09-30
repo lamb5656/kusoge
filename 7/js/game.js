@@ -12,12 +12,21 @@ import {
 
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
-  canvas.width  = Math.floor(rect.width * DPR);
-  canvas.height = Math.floor(rect.height * DPR);
+  const cssW = rect.width;
+  const rawH = rect.height;
+  const cssH = Math.min(rawH, CONFIG.canvasMaxHeightPx || rawH); // 上限を適用
+
+  canvas.width  = Math.floor(cssW * DPR);
+  canvas.height = Math.floor(cssH * DPR);
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  state.groundY = canvas.height / DPR - 20;
-  resizePile(canvas.width / DPR, state.groundY);
+
+  // 地面の位置も CSS 高さ基準で更新
+  state.groundY = cssH - 20;
+
+  // ハイトマップも同じ横幅と新しい地面Yでリサイズ
+  resizePile(cssW, state.groundY);
 }
+
 
 function buildSoftNodes(r) {
   state.sphere.nodes = [];
@@ -523,7 +532,6 @@ function drawSoftBodyFill() {
   ctx.stroke();
   ctx.restore();
 }
-
 
 function draw() {
   // 背景

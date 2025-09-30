@@ -7,7 +7,7 @@ export const CONFIG = {
   maxParticles: 10000,
 
   // 速度抑制
-  particleVTerminal: 520,
+  particleVTerminal: 350,
   particleHDrag: 2.2,
   spawnVxJitter: 20,
 
