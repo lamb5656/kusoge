@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>snig2 – CheerpJ (Mobile Optimized)</title>
+    <script src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
+    <style>
+      :root { --maxw: 560px; }
+      html, body { height: 100%; margin: 0; padding: 0; background: #111; color: #fff; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+      .wrap { min-height: 100%; display: grid; grid-template-rows: auto 1fr auto; }
+      header, footer { padding: 12px 16px; }
+      header { text-align: center; background: #1a1a1a; position: sticky; top: 0; z-index: 5; }
+      main { display: grid; place-items: center; padding: 14px; }
+      .panel { width: min(var(--maxw), 100%); background: #181818; border: 1px solid #2a2a2a; border-radius: 14px; padding: 12px; }
+      .applet-wrap { display: grid; place-items: center; }
+      .applet-scale { display: inline-block; transform-origin: top left; }
+      .hint { font-size: 13px; opacity: .8; line-height: 1.5; }
+      a { color: #7fd1ff; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header><strong>snig2 – Processing Applet (CheerpJ, Mobile)</strong></header>
+      <main>
+        <div class="panel">
+          <div class="hint" style="margin-bottom: 8px;">
+            ・指で線を引けます（ドラッグ）。<br>
+            ・<strong>ダブルタップ</strong>で「火をつける」線を消す。<br>
+          </div>
+          <div class="applet-wrap">
+            <div id="scaleBox" class="applet-scale">
+              <applet id="theApplet" code="snig2" archive="snig2.jar, core.jar" width="300" height="416"></applet>
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer class="hint">
+        Powered by CheerpJ (CDN). Place <code>snig2.jar</code> &amp; <code>core.jar</code> next to this HTML over HTTPS.<br/>
+      </footer>
+    </div>
+    <script>
+      cheerpjInit(); // Java 8 runtime by default (Applet compatible)
+
+      // Scale the applet to fit the screen width while keeping aspect ratio.
+      (function() {
+        const baseW = 300, baseH = 416, margin = 16;
+        function fit() {
+          const scaleBox = document.getElementById('scaleBox');
+          const avail = Math.min(window.innerWidth - margin*2, 560);
+          const s = Math.max(0.5, Math.min(2.2, avail / baseW));
+          scaleBox.style.transform = 'scale(' + s.toFixed(4) + ')';
+        }
+        window.addEventListener('resize', fit, { passive: true });
+        window.addEventListener('orientationchange', fit);
+        fit();
+      })();
+
+      // iOS Safari quirks: reduce double-tap-to-zoom and ensure dblclick is delivered.
+      (function() {
+        const target = document.getElementById('theApplet');
+        let lastTap = 0;
+        function onTouchEnd(ev) {
+          const now = Date.now();
+          const dt = now - lastTap;
+          lastTap = now;
+          if (dt < 320) {
+            // Dispatch a synthetic dblclick on quick two taps
+            const e = new MouseEvent('dblclick', { bubbles: true, cancelable: true, view: window });
+            target.dispatchEvent(e);
+            ev.preventDefault();
+          }
+        }
+        // help avoid pinch/double-tap zoom
+        document.documentElement.style.touchAction = 'manipulation';
+        target.addEventListener('touchend', onTouchEnd, { passive: false });
+      })();
+    </script>
+  </body>
+</html>
