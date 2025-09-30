@@ -166,7 +166,7 @@ async function build(){
   cardsEl.innerHTML = "";
   const base = baseInput.value;
   const maxN = Math.max(1, Number(maxInput.value||20));
-  hintEl.textContent = `読み込み中…（list.json を探し、なければ ${base}1..${maxN} をスキャン）`;
+  hintEl.textContent = `ゲームをスキャン中...）`;
 
   // 1) list.json 優先
   let items = await tryLoadListJson(base);
