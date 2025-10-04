@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>一筆書きグリッド</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="dot"></span><span>一筆書きグリッド</span></div>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <div class="panel">
+    <div class="controls">
+      <span class="pill">
+        <label for="showWalls">壁表示</label>
+        <input id="showWalls" type="checkbox" checked />
+      </span>
+      <span class="pill">
+        <label for="density">壁密度</label>
+        <input id="density" type="range" min="0" max="0.45" step="0.01" value="0.18" />
+        <span id="densityVal" style="font-variant-numeric:tabular-nums">0.18</span>
+      </span>
+      <span class="pill">
+        <label for="seed">SEED</label>
+        <input id="seed" type="text" size="10" placeholder="auto" />
+      </span>
+    </div>
+    <div class="controls">
+      <button id="reset" class="btn">やり直し</button>
+      <button id="undo" class="btn">一手戻る</button>
+      <button id="new" class="btn">同サイズで再生成</button>
+      <button id="next" class="btn primary">次のレベル ▶</button>
+      <button id="levelReset" class="btn">レベルリセット</button>
+    </div>
+  </div>
+
+  <div id="stageWrap"><canvas id="stage" width="1200" height="1200"></canvas></div>
+
+  <div class="panel" style="align-items:flex-start">
+    <div class="help">
+      <b>ルール</b><br />
+      緑のスタートから始め、全てのマスを1回ずつ通って線を引けばクリアです。同じマスは二度通れません。<br />
+      太い暗色のバーと赤いスラッシュがある方向は<strong>通れない壁</strong>です。
+    </div>
+    <div class="control-row">
+      <button id="giveup" class="btn danger">詰んだらリセット</button>
+      <button id="hint" class="btn">ヒント（次の一手）</button>
+      <button id="solver" class="btn">解答表示</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="winOverlay" hidden>
+    <div class="dialog">
+      <h2>🎉 クリア！</h2>
+      <p>全部のマスを一筆で踏破したにゃ。次はどうする？</p>
+      <div class="actions">
+        <button id="winAgain" class="btn">同サイズでもう一回</button>
+        <button id="winNext" class="btn success">次のレベル ▶</button>
+        <button id="winClose" class="btn">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden>
+    <div class="msg" id="toastMsg">OK</div>
+  </div>
+
+  <script src="engine.js"></script>
+  <script src="generator.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
