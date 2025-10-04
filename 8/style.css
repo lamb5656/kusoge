@@ -1,0 +1,31 @@
+:root{--cell:clamp(44px,12vw,64px);--gap:6px}
+*{box-sizing:border-box}body{font-family:system-ui,Segoe UI,Helvetica,Arial,sans-serif;margin:16px 16px 120px}
+h1{margin:8px 0 4px;font-size:20px}
+#status{font-weight:600;margin:6px 0 10px}
+.toprow{display:flex;gap:8px}
+.btn{flex:1;padding:14px 16px;font-size:16px;border:1px solid #ddd;border-radius:12px;background:#fff}
+.btn.primary{background:#2b7cff;color:#fff;border-color:#2b7cff}
+.btn:disabled{opacity:.5}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{background:#f1f4ff;color:#123;border:1px solid #dfe6ff;border-radius:999px;padding:6px 10px;font-size:13px}
+.tabs{display:flex;gap:8px;margin:6px 0}
+.tab{flex:1;padding:12px 10px;font-size:15px;border:1px solid #ddd;border-radius:12px;background:#fff}
+.tab.active{background:#111;color:#fff;border-color:#111}
+.boardwrap{display:flex;justify-content:center}
+.hidden{display:none}
+.board{display:grid;grid-template-columns:repeat(7,var(--cell));gap:var(--gap);padding:10px;border:1px solid #ddd;border-radius:16px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.cell{width:var(--cell);height:var(--cell);border-radius:10px;background:#f6f7fb;display:flex;align-items:center;justify-content:center;font-weight:700;user-select:none;touch-action:manipulation;transition:transform .05s,opacity .15s,background .15s,box-shadow .15s}
+.cell:active{transform:scale(.98)}
+.cell.me{background:#e6f0ff}
+.cell.ship{background:#4f9dff;color:#00325f}
+.cell.preview{background:#a9ceff}
+.cell.invalid{background:#ffd8d8;box-shadow:0 0 0 3px #ff6b6b inset}
+.cell.hit{background:#ff5c5c;color:#fff}
+.cell.ripple{box-shadow:0 0 0 4px rgba(70,130,180,.35) inset}
+.cell.miss{color:#444;background:repeating-linear-gradient(135deg,#f1f1f6 0 8px,#e6e6ee 8px 16px);border:2px dashed #bdbdcc;font-size:14px}
+.actionbar{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #eee;box-shadow:0 -6px 16px rgba(0,0,0,.06)}
+.phase{font-size:14px;margin-bottom:8px}
+.abtns{display:flex;gap:8px}
+.logbox{margin-top:12px}
+#log{background:#f6f6f6;padding:10px;border-radius:10px;height:160px;overflow:auto;font-size:13px;white-space:pre-wrap}
+@media(min-width:800px){body{margin:24px 24px 140px}h1{font-size:22px}}

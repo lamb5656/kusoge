@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ミニ戦艦 7×7</title>
+<link rel="stylesheet" href="./style.css" />
+<h1>ミニ戦艦 7×7</h1>
+<div id="status">待機中</div>
+<div class="toprow">
+  <button id="queue" class="btn primary">ランダムマッチ</button>
+  <button id="rematch" class="btn" disabled>もう一度</button>
+</div>
+<div class="chips">
+  <span class="chip">ラウンド <span id="round">--</span> / 10</span>
+  <span class="chip">残り <span id="timer">--</span> 秒</span>
+  <span class="chip">あなた <span id="hpMe">2</span></span>
+  <span class="chip">相手 <span id="hpOp">2</span></span>
+</div>
+<div class="tabs">
+  <button id="tabOp" class="tab active">相手の盤</button>
+  <button id="tabMe" class="tab">自分の盤</button>
+</div>
+<div id="boardOpWrap" class="boardwrap">
+  <div id="boardOp" class="board"></div>
+</div>
+<div id="boardMeWrap" class="boardwrap hidden">
+  <div id="boardMe" class="board"></div>
+</div>
+<div class="actionbar">
+  <div id="phaseInfo" class="phase">配置フェーズ：艦(長さ2)を置いてください</div>
+  <div class="abtns">
+    <button id="toggle" class="btn" disabled>縦/横 切替</button>
+    <button id="confirm" class="btn primary" disabled>配置を確定</button>
+  </div>
+</div>
+<details class="logbox">
+  <summary>ログ</summary>
+  <pre id="log"></pre>
+</details>
+<script src="./app.js"></script>
