@@ -1,0 +1,231 @@
+/* ===== Base ===== */
+* { box-sizing: border-box; }
+:root{
+  --bg:#0d1017; --panel:#161b22; --line:#2a2f36; --fg:#e6edf3;
+  --muted:#9aa4b2; --shadow: rgba(0,0,0,.25);
+  --unit:#3ecf8e;  --spell:#7ab7ff; --equip:#f6d66d;
+}
+body{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  background: var(--bg); color: var(--fg); margin:0;
+}
+header, footer{ padding:12px 16px; background:var(--panel); border-bottom:1px solid var(--line); }
+footer{ border-top:1px solid var(--line); border-bottom:none; }
+main{ padding:16px; display:grid; gap:16px; }
+.panel{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; }
+.hint{ opacity:.8; font-size:12px; }
+#status{ font-size:12px; opacity:.8; }
+
+/* ===== Top info / buttons ===== */
+.info{ display:flex; gap:12px; align-items:center; justify-content:center; }
+.player-hp{ text-align:center; font-weight:700; }
+button{
+  background:#238636; color:#fff; border:none; padding:8px 12px;
+  border-radius:8px; cursor:pointer; font-weight:700;
+}
+button:hover{ filter:brightness(1.05); }
+button:focus-visible{ outline:2px solid #58a6ff; outline-offset:2px; }
+button[disabled]{ opacity:.5; cursor:not-allowed; }
+
+/* ===== Board ===== */
+.board{ display:grid; gap:12px; }
+.player-section{ display:grid; gap:8px; }
+
+/* 盤面のユニット列（5列固定） */
+.row{
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0,1fr));
+  gap:8px;
+  min-height:96px;
+}
+
+/* ===== Hand: 5列×2段（10枚） ===== */
+.hand{
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0,1fr)); /* ★ 5列でカードを広く */
+  grid-auto-rows: 1fr;
+  gap:12px;
+  min-height: 252px; /* ★ 120px×2 + 12px（段間の余白）目安 */
+  align-items: stretch;
+}
+
+/* ===== Card (clean look) ===== */
+.card{
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.0));
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px 12px;
+  padding-top:36px;            /* 上にトップバー（バッジ＆コスト）領域を確保 */
+  min-height:120px;            /* 広め */
+  box-shadow: 0 4px 10px var(--shadow);
+  transition: transform .08s ease, box-shadow .08s ease, border-color .2s ease;
+}
+.card:hover{ transform: translateY(-1px); box-shadow: 0 8px 16px var(--shadow); }
+
+/* 左側のタイプ色アクセント */
+.card.unit::before, .card.spell::before, .card.equip::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:4px; border-radius:12px 0 0 12px; opacity:.5;
+}
+.card.unit::before{  background: var(--unit); }
+.card.spell::before{ background: var(--spell); }
+.card.equip::before{ background: var(--equip); }
+
+/* タイトル・本文 */
+.card h4{ margin:0 0 4px; font-size:14px; line-height:1.25; }
+.card .meta{ display:flex; justify-content:space-between; align-items:center; margin-top:2px; }
+.card .stats{ fontサイズ:12px; color: var(--muted); }
+.card .desc{ margin-top:6px; font-size:12.5px; color:#c8d1dc; line-height:1.35; }
+
+/* 旧の小さな cost 表示は廃止（右上バブルに統一） */
+.card .cost{ display:none !important; }
+
+/* ===== Top bar: type-badge（左上） + cost-bubble（右上） ===== */
+/* バッジは右端44pxを空けて、コスト丸と重ならないようにする */
+.card .type-badge{
+  position:absolute; top:8px; left:8px; right:44px; z-index:1;
+  height:22px; line-height:22px; display:block;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  font-size:11px; font-weight:700; padding:0 8px;
+  border-radius:999px; border:1px solid var(--line);
+  background: rgba(255,255,255,.86); color:#0b0e14;
+}
+.type-badge.badge-unit { background: color-mix(in oklab, var(--unit) 30%, white 70%); }
+.type-badge.badge-spell{ background: color-mix(in oklab, var(--spell) 30%, white 70%); }
+.type-badge.badge-equip{ background: color-mix(in oklab, var(--equip) 35%, white 65%); }
+
+/* 右上のコスト丸（控えめ・高コントラスト） */
+.cost-bubble{
+  position:absolute; top:8px; right:8px; z-index:2;
+  width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+  font-weight:900; font-size:13px; line-height:1;
+  border-radius:999px; background:rgba(255,255,255,.92); color:#0b0e14;
+  border:1.5px solid #c9d1d9; box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+/* 種別で縁色だけ薄く変える（強すぎない） */
+.card.unit  .cost-bubble{ border-color: color-mix(in oklab, var(--unit) 55%,  #c9d1d9 45%); }
+.card.spell .cost-bubble{ border-color: color-mix(in oklab, var(--spell) 55%, #c9d1d9 45%); }
+.card.equip .cost-bubble{ border-color: color-mix(in oklab, var(--equip) 55%,#c9d1d9 45%); }
+
+/* ===== Interactions ===== */
+.card.selectable{ cursor:pointer; }
+.card.targetable{ outline: 3px dashed color-mix(in oklab, var(--spell) 55%, white 45%); outline-offset:3px; }
+.card.can-attack{ box-shadow: 0 0 0 2px color-mix(in oklab, var(--unit) 35%, transparent); }
+.selected{
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, var(--unit) 85%, white 15%),
+    0 0 20px rgba(62,207,142,.45) !important;
+}
+.face-target{ text-decoration: underline; text-underline-offset:4px; }
+
+/* 装飾はクリックを拾わない（カード本体へ透過） */
+.type-badge, .cost-bubble { pointer-events: none; }
+
+/* 攻撃不可っぽい見た目（今ターン攻撃できない） */
+.card.unit.disabled{
+  filter: grayscale(.35) brightness(.92);
+  opacity:.65;
+}
+.card.unit.disabled::after{
+  content:"";
+  position:absolute; inset:0; border-radius:inherit;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,.06) 0 8px,
+    rgba(255,255,255,0)   8px 16px
+  );
+  pointer-events:none;
+}
+.card.unit.disabled .type-badge{ opacity:.7; }
+
+/* 攻撃できる：やさしい緑のパルス＋クロスヘア */
+.card.can-attack {
+  cursor: crosshair;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--unit) 60%, transparent);
+}
+.card.can-attack::after{
+  content:"";
+  position:absolute; inset:-3px;
+  border-radius:14px;
+  box-shadow:
+    0 0 0 2px rgba(62,207,142,.9),
+    0 0 18px rgba(62,207,142,.35);
+  animation: atkPulse 1.15s ease-in-out infinite alternate;
+  pointer-events:none;
+}
+
+/* === Card Art === */
+.card .art{
+  width: 100%;
+  /* 4/3 → 1/1（正方形）にして縦を広げる */
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0b0e14;
+  border: 1px solid var(--line);
+  margin-bottom: 8px; /* 少し余白を増やす */
+}
+.card .art-img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 上側が見えやすいように少し上寄せ表示 */
+  object-position: 50% 20%;
+  display: block;
+}
+.card .art-ph{
+  width: 100%; height: 100%;
+  display:flex; align-items:center; justify-content:center;
+  font-weight: 800; font-size: 14px; letter-spacing: .5px;
+  color: #c9d1d9;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,0)),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.05) 0 10px, rgba(255,255,255,0) 10px 20px);
+}
+
+@keyframes atkPulse {
+  from { opacity:.65; transform: scale(1); }
+  to   { opacity:1;    transform: scale(1.01); }
+}
+
+/* ===== Overlay ===== */
+#overlay{ position:fixed; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.6); z-index:1000; }
+#overlay.hidden{ display:none; }
+#overlayMsg{ font-size:56px; font-weight:800; text-shadow:0 4px 20px rgba(0,0,0,.45); transform:scale(.9); opacity:0; animation: pop .45s forwards ease-out; }
+#overlay.win  #overlayMsg{ color: color-mix(in oklab, var(--unit) 90%, white 10%); }
+#overlay.lose #overlayMsg{ color:#ff8a8a; }
+#overlay.draw #overlayMsg{ color:#c9d1d9; }
+@keyframes pop { to{ transform:scale(1); opacity:1; } }
+
+/* confetti container */
+#confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+#confetti span{ position:absolute; top:-10px; width:8px; height:12px; border-radius:2px; opacity:.9; animation: fall linear forwards; }
+@keyframes fall { to { transform: translateY(110vh) rotate(540deg); opacity:.95; } }
+
+/* ===== Responsive（狭い時は自動で列数を落とす） ===== */
+@media (max-width: 900px){
+  .hand{ grid-template-columns: repeat(4, minmax(0,1fr)); min-height: 252px; }
+}
+@media (max-width: 700px){
+  .hand{ grid-template-columns: repeat(3, minmax(0,1fr)); min-height: 252px; }
+}
+
+/* ====== 並び順（Flex）:  opp手札 → oppHP → opp列 → 操作 → 自分列 → 自分手札 → 自分HP  ====== */
+/* Board 全体を縦フレックスにして order で制御（.board の grid を打ち消す） */
+#board{
+  display: flex !important;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 並び順 */
+#oppHand { order: 1; }
+#oppHp   { order: 2; align-self: center; }
+#oppRow  { order: 3; }
+
+#turnInfo, #manaInfo, #endTurn { order: 4; align-self: center; } /* 操作系は真ん中 */
+
+#youRow  { order: 5; }
+#youHand { order: 6; }
+#youHp   { order: 7; align-self: center; }
+

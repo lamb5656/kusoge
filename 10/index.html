@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Card Battle (v1.0)</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Card Battle (v1.0)</h1>
+    <div id="status">Disconnected</div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <label>Alias: <input id="alias" placeholder="Your name" /></label>
+      <button id="quickMatch">Quick Match</button>
+      <div class="hint">後攻は最初のターン、マナ2からスタート。</div>
+    </section>
+
+    <section class="panel" id="deckPanel">
+      <h2>現在デッキは選択出来ません</h2>
+      <div id="deckList"></div>
+    </section>
+
+    <section class="board" id="board">
+      <div class="player-section">
+        <div class="player-hp" id="oppHp"></div>
+        <div class="row" id="oppRow"></div>
+        <div class="hand" id="oppHand"></div>
+      </div>
+
+      <div class="info">
+        <div id="turnInfo"></div>
+        <div id="manaInfo"></div>
+        <button id="endTurn" disabled>End Turn</button>
+      </div>
+
+      <div class="player-section">
+        <div class="player-hp" id="youHp"></div>
+        <div class="row" id="youRow"></div>
+        <div class="hand" id="youHand"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <small>© 2025 Card Battle Starter</small>
+  </footer>
+
+  <div id="overlay" class="overlay hidden" aria-hidden="true">
+    <div class="message" id="overlayMsg">You Win!</div>
+    <div class="confetti" id="confetti"></div>
+  </div>
+
+  <script type="module" src="./config.js"></script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
