@@ -4,7 +4,8 @@ import { serializeDeck, deserializeDeck } from "./game/state.js";
 import { DECK_PRESETS } from "./game/cards/index.js";
 import { renderAll, bindUI, renderBlank } from "./ui/render.js";
 
-const els = { status: document.getElementById("status"), alias: document.getElementById("alias"), quick: document.getElementById("quickMatch"), endTurn: document.getElementById("endTurn") };
+const els = { status: document.getElementById("status"), alias: document.getElementById("alias"), quick: document.getElementById("quickMatch"), endTurn: document.getElementById("endTurn"), ai: document.getElementById("aiMatch") };
+
 let roomConn = null; let you = null; let state = null;
 
 function setStatus(t){ els.status.textContent = t; }
@@ -17,4 +18,47 @@ function bindGameUI(){ bindUI({ onPlayCard:(handIdx, targetIdx)=>{ if(!roomConn?
 
 async function quickMatch(){ try{ resetBeforeMatch(); setStatus("Matching..."); const alias = els.alias.value.trim() || "Anon"; const chosen = deserializeDeck(localStorage.getItem("deck")); const found = await connectMatchmaker(WORKER_BASE_URL); you = found.you; setStatus(`Matched! You are ${you}. Joining room...`); roomConn = await connectRoom(WORKER_BASE_URL, found.roomId, { onOpen(api){ setStatus(`Connected to room ${found.roomId}`); api.send({ type:"hello", alias, deck: chosen }); }, onMessage(data){ if (data.type === "sync") { state = data.state; window.__STATE__ = state; window.__YOU__ = you; renderAll(state, you); if (state.winner) { const w = state.winner === "draw" ? "Draw" : (state.winner === you ? "You win!" : "You lose."); setStatus(`Game over: ${w}`); } } else if (data.type === "info") { setStatus(data.text); } }, onClose(){ setStatus("Room closed"); roomConn=null; }, onError(err){ console.error(err); setStatus("Error"); roomConn=null; }, }); } catch(e){ console.error(e); setStatus("Match failed"); } }
 
-setupDeckUI(); bindGameUI(); els.quick.addEventListener("click", quickMatch);
+async function aiMatch(){
+  try{
+    resetBeforeMatch();
+    setStatus("Connecting AI...");
+
+    const alias  = els.alias.value.trim() || "Anon";
+    const chosen = deserializeDeck(localStorage.getItem("deck"));
+    // ランダムな部屋IDを生成
+    const roomId = (self.crypto?.randomUUID?.() || Math.random().toString(36).slice(2));
+
+    // ★ 人間は常に A 側（AIは B）で進行させる
+    you = "A";
+
+    // 既存の connectRoom をそのまま利用。roomId に `?ai=1` を付与
+    roomConn = await connectRoom(WORKER_BASE_URL, `${roomId}?ai=1`, {
+      onOpen(api){
+        setStatus(`Connected vs AI (${roomId})`);
+        api.send({ type:"hello", alias, deck: chosen });
+      },
+      onMessage(data){
+        if (data.type === "sync") {
+          state = data.state;
+          window.__STATE__ = state; window.__YOU__ = you;
+          renderAll(state, you);
+          if (state.winner) {
+            const w = state.winner === "draw" ? "Draw" : (state.winner === you ? "You win!" : "You lose.");
+            setStatus(`Game over: ${w}`);
+          }
+        } else if (data.type === "info") {
+          setStatus(data.text);
+        }
+      },
+      onClose(){ setStatus("Room closed"); roomConn=null; },
+      onError(err){ console.error(err); setStatus("Error"); roomConn=null; },
+    });
+  } catch(e){
+    console.error(e);
+    setStatus("AI match failed");
+  }
+}
+
+setupDeckUI(); bindGameUI();
+els.quick.addEventListener("click", quickMatch);
+els.ai?.addEventListener("click", aiMatch);
