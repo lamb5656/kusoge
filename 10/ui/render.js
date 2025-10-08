@@ -12,6 +12,9 @@ export function renderAll(state, you) {
   const opp = state.players[you === "A" ? "B" : "A"];
   const board = document.getElementById("board");
 
+  const isMatched = !!(state && state.players && state.players.A && state.players.B);
+  document.body.classList.toggle("in-match", isMatched);
+
   attackEnabled = state.turn === you && !state.winner;
 
   // HP / Turn
@@ -68,6 +71,8 @@ export function renderAll(state, you) {
         refreshSelectionHighlight(youRow, i);
         const faceOK = opp.row.length === 0;
         if (faceOK) document.getElementById("oppHp")?.classList.add("face-target");
+        const showFace = faceOK && attackEnabled && (attackerSel !== null) && !pendingSpell;
+        setupFaceOverlay({ board: document.getElementById("board"), show: showFace });
       }
     });
 
@@ -121,6 +126,12 @@ export function renderAll(state, you) {
 
   // EndTurn
   document.getElementById("endTurn").disabled = state.turn !== you || !!state.winner;
+
+  setupFaceOverlay({
+    board,
+    show: (opp.row.length === 0) && attackEnabled && (attackerSel !== null) && !pendingSpell
+  });
+
 }
 
 export function renderBlank() {
@@ -134,6 +145,7 @@ export function renderBlank() {
   document.getElementById("oppHand").innerHTML = "";
   document.getElementById("endTurn").disabled = true;
   clearSelection(); clearTargeting(); hideEndOverlay();
+  document.body.classList.remove("in-match");
 }
 
 /* ---------- Render helpers ---------- */
@@ -242,6 +254,42 @@ function renderHiddenCard() {
   return el;
 }
 
+function setupFaceOverlay({ board, show }) {
+  const oppRow = document.getElementById("oppRow");
+  const oppHpEl = document.getElementById("oppHp");
+  if (!oppRow) return;
+
+  let zone = document.getElementById("faceZone");
+  if (!zone) {
+    zone = document.createElement("button");
+    zone.id = "faceZone";
+    zone.type = "button";
+    zone.className = "face-zone hidden";
+    zone.innerHTML = `<span class="face-zone-label">直接攻撃！！</span>`;
+    oppRow.appendChild(zone);
+  }
+
+  // HPラベルも強調
+  oppHpEl?.classList.toggle("face-ready", !!show);
+
+  if (show) {
+    zone.classList.remove("hidden");
+    zone.onclick = () => {
+      // 選択中の攻撃役で顔面を殴る
+      if (typeof attackerSel === "number") {
+        board.dispatchEvent(new CustomEvent("attack", {
+          bubbles: true,
+          detail: { attackerIdx: attackerSel, targetIdx: "face" }
+        }));
+        clearSelection();
+      }
+    };
+  } else {
+    zone.classList.add("hidden");
+    zone.onclick = null;
+  }
+}
+
 
 /* ---------- Descriptions (JP) ---------- */
 function effectDesc(e) {
@@ -288,7 +336,12 @@ function cardTargetType(card){
 
 /* ---------- Utils ---------- */
 function refreshSelectionHighlight(youRow, idx) { [...youRow.children].forEach((c, i) => c.classList.toggle("selected", i === idx)); }
-function clearSelection() { attackerSel = null; document.querySelectorAll(".selected").forEach((el) => el.classList.remove("selected")); document.getElementById("oppHp")?.classList.remove("face-target"); }
+function clearSelection() {
+  attackerSel = null;
+  document.querySelectorAll(".selected").forEach((el) => el.classList.remove("selected"));
+  document.getElementById("oppHp")?.classList.remove("face-target");
+  setupFaceOverlay({ board: document.getElementById("board"), show: false });
+}
 function clearTargeting(){ pendingSpell = null; document.querySelectorAll(".targetable").forEach((el)=>el.classList.remove("targetable")); }
 function dispatchAttack(board, attackerIdx, targetIdx) { board.dispatchEvent(new CustomEvent("attack", { bubbles: true, detail: { attackerIdx, targetIdx } })); }
 function dispatchSpellTarget(board, handIdx, targetIdx) { board.dispatchEvent(new CustomEvent("spelltarget", { bubbles: true, detail: { handIdx, targetIdx } })); }
@@ -306,24 +359,47 @@ function hideEndOverlay() {
   const ov = document.getElementById("overlay"); if (!ov) return;
   ov.classList.add("hidden"); ov.classList.remove("win","lose","draw");
   const conf = document.getElementById("confetti"); if (conf) conf.innerHTML = "";
+  const a = document.getElementById("overlayActions");
+  if (a) a.replaceChildren();
 }
+
 function showEndOverlay(type, text) {
   const ov = document.getElementById("overlay"); const msg = document.getElementById("overlayMsg");
   if (!ov || !msg) return;
+
   msg.textContent = text;
   ov.classList.remove("hidden"); ov.classList.remove("win","lose","draw"); ov.classList.add(type);
-  const conf = document.getElementById("confetti"); if (!conf) return;
-  conf.innerHTML = "";
-  if (type === "win") {
-    for (let i=0;i<80;i++) {
-      const s = document.createElement("span");
-      s.style.left = (Math.random()*100) + "vw";
-      s.style.animationDuration = (2.5 + Math.random()*1.5) + "s";
-      s.style.animationDelay = (Math.random()*0.6) + "s";
-      s.style.background = `hsl(${Math.floor(Math.random()*360)}, 90%, 60%)`;
-      conf.appendChild(s);
+
+  // confetti（勝利のみ）
+  const conf = document.getElementById("confetti");
+  if (conf) {
+    conf.innerHTML = "";
+    if (type === "win") {
+      for (let i=0;i<80;i++) {
+        const s = document.createElement("span");
+        s.style.left = (Math.random()*100) + "vw";
+        s.style.animationDuration = (2.5 + Math.random()*1.5) + "s";
+        s.style.animationDelay = (Math.random()*0.6) + "s";
+        s.style.background = `hsl(${Math.floor(Math.random()*360)}, 90%, 60%)`;
+        conf.appendChild(s);
+      }
     }
   }
+
+  let actions = document.getElementById("overlayActions");
+  if (!actions) {
+    actions = document.createElement("div");
+    actions.id = "overlayActions";
+    actions.className = "overlay-actions";
+    ov.appendChild(actions);
+  }
+  actions.innerHTML = `<button id="btnLobby" class="btn-ghost">ロビーに戻る</button>`;
+
+  document.getElementById("btnLobby").onclick = () => {
+    hideEndOverlay();
+    document.body.classList.remove("in-match"); // ロビーUIを再表示
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 }
 
 function slugifyJP(name){

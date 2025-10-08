@@ -74,7 +74,7 @@ button[disabled]{ opacity:.5; cursor:not-allowed; }
 /* タイトル・本文 */
 .card h4{ margin:0 0 4px; font-size:14px; line-height:1.25; }
 .card .meta{ display:flex; justify-content:space-between; align-items:center; margin-top:2px; }
-.card .stats{ fontサイズ:12px; color: var(--muted); }
+.card .stats{ font-size:12px; color: var(--muted); }
 .card .desc{ margin-top:6px; font-size:12.5px; color:#c8d1dc; line-height:1.35; }
 
 /* 旧の小さな cost 表示は廃止（右上バブルに統一） */
@@ -195,6 +195,23 @@ button[disabled]{ opacity:.5; cursor:not-allowed; }
 #overlay.win  #overlayMsg{ color: color-mix(in oklab, var(--unit) 90%, white 10%); }
 #overlay.lose #overlayMsg{ color:#ff8a8a; }
 #overlay.draw #overlayMsg{ color:#c9d1d9; }
+/* === Result overlay actions === */
+#overlay { position: fixed; inset: 0; display: grid; place-items: center; }
+.overlay-actions{
+  margin-top: 16px;
+  display: flex; gap: 12px; justify-content: center; align-items: center;
+}
+.overlay-actions .btn-primary{
+  background:#238636; color:#fff; border:none; padding:10px 14px; border-radius:10px;
+  font-weight:800; font-size:14px; cursor:pointer;
+}
+.overlay-actions .btn-primary:hover{ filter:brightness(1.06); }
+.overlay-actions .btn-ghost{
+  background:transparent; color:#c9d1d9; border:1px solid #2a2f36;
+  padding:10px 14px; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer;
+}
+.overlay-actions .btn-ghost:hover{ background:rgba(255,255,255,.05); }
+
 @keyframes pop { to{ transform:scale(1); opacity:1; } }
 
 /* confetti container */
@@ -246,3 +263,124 @@ button[disabled]{ opacity:.5; cursor:not-allowed; }
   object-fit: cover;            /* 画像を全面にフィル */
   object-position: 50% 50%;
 }
+
+/* === 直接攻撃ガイド（相手盤面オーバーレイ） === */
+#oppRow { position: relative; }
+
+.face-zone{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 2px dashed color-mix(in oklab, var(--unit) 70%, white 30%);
+  border-radius: 12px;
+  background:
+    radial-gradient(closest-side, rgba(62,207,142,.18), rgba(62,207,142,0) 70%);
+  cursor: crosshair;
+  animation: facePulse 1.2s ease-in-out infinite alternate;
+  z-index: 5;
+}
+.face-zone.hidden{ display: none; }
+
+.face-zone-label{
+  font-weight: 900;
+  font-size: 22px;
+  color: color-mix(in oklab, var(--unit) 85%, white 15%);
+  text-shadow: 0 2px 8px rgba(0,0,0,.45);
+}
+.face-zone-label small{
+  display:block; font-size:12px; opacity:.9; margin-top:4px;
+}
+
+@keyframes facePulse {
+  from { box-shadow: 0 0 0 0 rgba(62,207,142,.35); transform: scale(1); }
+  to   { box-shadow: 0 0 0 8px rgba(62,207,142,.0); transform: scale(1.005); }
+}
+
+/* === 顔面OK時はHP表示もデカく点滅 === */
+#oppHp.face-ready{
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(62,207,142,.15);
+  outline: 2px solid color-mix(in oklab, var(--unit) 70%, white 30%);
+  box-shadow: 0 0 16px rgba(62,207,142,.35);
+  transform: scale(1.08);
+  transition: transform .12s ease;
+  animation: faceReadyBlink 1s ease-in-out infinite alternate;
+  cursor: crosshair;
+}
+@keyframes faceReadyBlink {
+  from { filter: saturate(1); }
+  to   { filter: saturate(1.3) brightness(1.05); }
+}
+
+/* ===== 対戦中コンパクトモード（全UIを1画面に収める） ===== */
+body.in-match {
+  --scale: .86;                        /* 全体の縮尺係数（必要なら .80～.92 で微調整） */
+}
+
+/* 盤外のパネル（ロビー/エイリアス/デッキ選択など）は非表示
+   → #board を内包していない .panel を全部隠す */
+body.in-match .panel:not(:has(#board)) {
+  display: none !important;
+}
+
+/* 余白を詰める */
+body.in-match main { padding: 8px; gap: 10px; }
+body.in-match .board { gap: 8px; }
+body.in-match .player-section { gap: 6px; }
+
+/* HP/情報行を小さめに */
+body.in-match #oppHp,
+body.in-match #youHp { font-size: 13px; }
+body.in-match #turnInfo, 
+body.in-match #manaInfo { font-size: 12px; }
+body.in-match #endTurn { padding: 6px 10px; font-size: 12px; border-radius: 6px; }
+
+/* カードのサイズを圧縮（高さ・余白・フォント） */
+body.in-match .card {
+  min-height: 98px;
+  padding: 8px 10px;
+  padding-top: 26px;                  /* 上部（バッジ/コスト）の余白も縮める */
+  border-radius: 10px;
+}
+body.in-match .card h4 { font-size: 12.5px; margin-bottom: 3px; }
+body.in-match .card .meta .stats,
+body.in-match .card .desc { font-size: 11.5px; }
+
+/* タイプバッジ/コスト丸も小型化 */
+body.in-match .type-badge {
+  height: 18px; line-height: 18px; font-size: 10px; padding: 0 6px;
+  right: 38px;                        /* 右上のコストと重ならないように */
+}
+body.in-match .cost-bubble {
+  width: 22px; height: 22px; font-size: 12px; border-width: 1px;
+  top: 6px; right: 6px;
+}
+
+/* アート枠：やや縦長を維持しつつ圧縮 */
+body.in-match .card .art { aspect-ratio: 4 / 3; margin-bottom: 6px; border-radius: 6px; }
+body.in-match .card .art-img { object-fit: cover; object-position: 50% 20%; }
+
+/* 盤面5枠の高さを抑える */
+body.in-match .row { min-height: 82px; gap: 6px; }
+
+/* 手札：6列×2段を基本にしつつ自動折返し、全体を低めに */
+body.in-match .hand{
+  grid-template-columns: repeat(6, minmax(0, 1fr)); /* 6列に増やして1枚ごとの幅を狭める */
+  grid-auto-rows: 1fr;
+  gap: 8px;
+  min-height: 188px;                   /* 2段でも収まる高さに */
+}
+
+/* 直接攻撃オーバーレイも縮小 */
+body.in-match .face-zone { border-width: 2px; }
+body.in-match .face-zone-label { font-size: 18px; }
+body.in-match .face-zone-label small { font-size: 11px; }
+
+/* 攻撃可/不可の視覚ヒントも控えめに（既存を上書き） */
+body.in-match .card.can-attack::after { inset: -2px; box-shadow: 0 0 0 2px rgba(62,207,142,.85), 0 0 12px rgba(62,207,142,.28); }
+body.in-match .selected { box-shadow: 0 0 0 2px color-mix(in oklab, var(--unit) 80%, white 20%), 0 0 12px rgba(62,207,142,.35) !important; }
+
+/* 裏面カード（相手手札）も小型化 */
+body.in-match .card.back .art { aspect-ratio: 4 / 3; margin: 0; }
