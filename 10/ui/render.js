@@ -157,52 +157,110 @@ function renderUnit(u) {
   const h = E("h4"); h.textContent = u.name; el.appendChild(h);
   const stats = E("div", "stats"); stats.textContent = `攻撃 ${u.atk} / 体力 ${u.hp}`; el.appendChild(stats);
 
-  // ★ キーワード（あれば表示）
-  if (u.kw) {
-    const row = E("div", "kw-row");
-    if (u.kw.taunt)  row.appendChild(kwBadge("挑発"));
-    if (u.kw.charge) row.appendChild(kwBadge("突撃"));
-    if (u.kw.shield && !u._shieldUsed) row.appendChild(kwBadge("聖盾"));
-    if (u.kw.deathrattle) row.appendChild(kwBadge("死亡時"));
-    el.appendChild(row);
-  }
+  // ★ 盤面ユニットにもキーワードバッジを表示（聖盾は消費で自動非表示）
+  const kwRow = kwRowFor(u.kw, u._shieldUsed);
+  if (kwRow) el.appendChild(kwRow);
+
   return el;
 }
-function kwBadge(t){ const b = E("span","kw"); b.textContent = t; return b; }
+
+/* ---------- Keyword labels & tooltip ---------- */
+const KW_TIP = {
+  taunt:  "挑発：このユニットが場にいる限り、相手は先にこのユニットを攻撃しなければならない。",
+  charge: "突撃：召喚したターンでも攻撃できる。",
+  shield: "聖盾：このユニットが最初に受けるダメージを1回だけ無効化する。",
+  // deathrattle は下の deathrattleText で個別生成
+};
+
+function kwBadge(label, tip) {
+  const b = E("span", "kw");
+  b.textContent = label;
+  // ブラウザ標準とカスタムの両方でツールチップが出るように
+  b.setAttribute("data-tip", tip);
+  b.title = tip;
+  return b;
+}
+
+// 死亡時の効果テキストを生成（手札/盤面どちらでも利用）
+function effectToText(e){
+  if (!e) return "効果";
+  switch (e.kind) {
+    case "draw":        return `${e.n ?? 1}枚ドロー`;
+    case "damage":
+      if (e.target === "face")          return `敵ヒーローに${e.n}ダメージ`;
+      if (typeof e.target === "number") return `敵ユニット#${e.target+1}に${e.n}ダメージ`;
+      if (e.target === "chooseEnemy")   return `選んだ敵ユニットに${e.n}ダメージ`;
+      return `${e.n}ダメージ`;
+    case "heal":
+      if (e.target === "face")          return `自ヒーローを${e.n}回復`;
+      if (typeof e.target === "number") return `味方ユニット#${e.target+1}を${e.n}回復`;
+      return `${e.n}回復`;
+    case "buffAttack":
+      if (e.target === "chooseAlly")    return `選んだ味方ユニットの攻撃+${e.n}`;
+      return `味方ユニットの攻撃+${e.n}`;
+    case "buffHealth":
+      if (e.target === "chooseAlly")    return `選んだ味方ユニットの体力+${e.n}`;
+      return `味方ユニットの体力+${e.n}`;
+    default:            return "効果";
+  }
+}
+function deathrattleText(effs){
+  if (!Array.isArray(effs) || effs.length === 0)
+    return "死亡時：倒されたとき、効果を発動。";
+  const parts = effs.map(effectToText);
+  return `死亡時：${parts.join("、")}`;
+}
+
+function kwRowFor(kw, shieldUsed) {
+  if (!kw) return null;
+  const row = E("div", "kw-row"); let added = false;
+
+  if (kw.taunt)       { row.appendChild(kwBadge("挑発",   KW_TIP.taunt));  added = true; }
+  if (kw.charge)      { row.appendChild(kwBadge("突撃",   KW_TIP.charge)); added = true; }
+  if (kw.shield && !shieldUsed) {
+                      row.appendChild(kwBadge("聖盾",     KW_TIP.shield)); added = true;
+  }
+  if (kw.deathrattle) {
+    row.appendChild(kwBadge("死亡時", deathrattleText(kw.deathrattle)));
+    added = true;
+  }
+  return added ? row : null;
+}
 
 function renderCard(c, idx) {
   const el = E("div", `card ${c.type} selectable`);
 
-  // タイプ別バッジ
-  if (c.type === "unit")      el.appendChild(typeBadge("ユニット", "badge-unit"));
+  if (c.type === "unit")       el.appendChild(typeBadge("ユニット", "badge-unit"));
   else if (c.type === "spell") el.appendChild(typeBadge("スペル", "badge-spell"));
   else if (c.type === "equip") el.appendChild(typeBadge("装備", "badge-equip"));
 
-  // ★ カード種別ごとに画像を表示
   if (c.type === "unit")       el.appendChild(unitArtElement(c.name));
   else if (c.type === "spell") el.appendChild(spellArtElement(c.name));
   else if (c.type === "equip") el.appendChild(equipArtElement(c.name));
 
   const h = E("h4"); h.textContent = c.name; el.appendChild(h);
 
-  // 右上コストバッジ
   const cost = E("div", `cost-bubble ${c.type}`);
   cost.textContent = c.cost ?? 0;
   el.appendChild(cost);
 
-  // メタ行
   const meta = E("div", "meta");
   const stats = E("span", "stats");
-  if (c.type === "unit") stats.textContent = `攻撃 ${c.atk} / 体力 ${c.hp}`;
+  if (c.type === "unit")       stats.textContent = `攻撃 ${c.atk} / 体力 ${c.hp}`;
   else if (c.type === "spell") stats.textContent = `スペル`;
   else if (c.type === "equip") stats.textContent = `装備`;
   meta.appendChild(stats);
   el.appendChild(meta);
 
+  // ★ 手札のユニットにもキーワードバッジ（死亡時は内容を動的表示）
+  if (c.type === "unit") {
+    const kwRow = kwRowFor(c.kw, /*手札では未使用なので*/ false);
+    if (kwRow) el.appendChild(kwRow);
+  }
+
   const desc = E("div", "desc"); desc.textContent = cardDescription(c); el.appendChild(desc);
   el.dataset.handIdx = idx;
 
-  // クリック処理（既存のまま）
   el.addEventListener("click", () => {
     const t = cardTargetType(c);
     if (t) {
@@ -218,7 +276,6 @@ function renderCard(c, idx) {
 
   return el;
 }
-
 
 function typeBadge(text, cls) {
   const b = E("div", `type-badge ${cls}`);
@@ -463,6 +520,7 @@ function unitArtElement(name){
   wrap.appendChild(img);
   return wrap;
 }
+
 function spellArtElement(name){
   const wrap = document.createElement("div");
   wrap.className = "art";
