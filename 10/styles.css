@@ -423,3 +423,49 @@ body.in-match .card.back .art { aspect-ratio: 4 / 3; margin: 0; }
 .kw:hover[data-tip]::after{
   opacity: 1; transform: translate(-50%, -8px);
 }
+
+/* ========== Card preview (mobile long-press) ========== */
+.preview-backdrop{
+  position: fixed; inset: 0;
+  display: none; place-items: center;
+  background: rgba(10,12,16,.4);
+  z-index: 1000;
+}
+.preview-backdrop.show{ display: grid; }
+.preview-backdrop.visible{ animation: pv-fade .12s ease; }
+@keyframes pv-fade{ from { opacity: 0 } to { opacity: 1 } }
+
+.preview-card{
+  width: min(92vw, 420px);
+  max-height: 90vh;
+  background: #0b0e14;
+  border: 1px solid #2a2f36;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  padding: 14px 14px 16px;
+  display: grid; gap: 10px;
+  grid-template-rows: auto auto auto auto auto auto;
+  overflow: hidden;
+}
+.preview-close{
+  position: absolute; right: 10px; top: 8px;
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid #2a2f36; background: rgba(255,255,255,.06);
+  color: #c9d1d9; font-weight: 800; cursor: pointer;
+}
+.preview-card .type-row{
+  display: flex; justify-content: space-between; align-items: center;
+}
+.preview-card .type-badge{ transform: scale(1.05); }
+.preview-card .cost{ font-weight: 700; opacity: .85; }
+
+.preview-card .art{ width: 100%; aspect-ratio: 4/3; overflow: hidden; border-radius: 12px; }
+.preview-card .art .art-img-large{ width: 100%; height: 100%; object-fit: cover; }
+
+.preview-card .title{ margin: 0; font-size: 18px; font-weight: 800; color: #e6edf3; }
+.preview-card .stats{ font-size: 14px; opacity: .9; }
+.preview-card .kw-row{ display: flex; gap: 6px; flex-wrap: wrap; }
+.preview-card .desc{ font-size: 13px; line-height: 1.4; opacity: .9; }
+
+/* プレビュー中は背面のスクロールを止める */
+body.preview-open{ overflow: hidden; }

@@ -1,4 +1,4 @@
-// Clean UI renderer: subtle accents, JP descriptions, targeted spell/equip, face lock with blockers
+// Clean UI renderer: JP descriptions, targeted spell/equip, face lock with blockers, long-press preview
 const E = (tag, cls) => { const el = document.createElement(tag); if (cls) el.className = cls; return el; };
 
 let attackerSel = null;
@@ -25,7 +25,7 @@ export function renderAll(state, you) {
   document.getElementById("turnInfo").textContent = state.winner ? `Game Over` : `Turn: ${state.turn}`;
   document.getElementById("manaInfo").textContent = `Mana: ${me.mana}/${me.maxMana}`;
 
-  // End overlay（日本語）
+  // End overlay
   if (state.winner) {
     const type = state.winner === "draw" ? "draw" : (state.winner === you ? "win" : "lose");
     showEndOverlay(type, type === "draw" ? "引き分け" : (type === "win" ? "勝利！" : "敗北…"));
@@ -56,27 +56,26 @@ export function renderAll(state, you) {
   me.row.forEach((u, i) => {
     const el = renderUnit(u);
 
-    // 視覚ヒント（元の挙動は維持）
     if (attackEnabled && u.canAttack) el.classList.add("can-attack");
 
-    // ★ 常時バインドして、内側で判定
+    // 自軍ユニット選択（攻撃役）
     el.addEventListener("click", () => {
-      if (pendingSpell) return;        // 対象選択中は攻撃選択に入らない
-      if (!attackEnabled) return;      // 自分のターン以外は無効
+      if (pendingSpell) return;
+      if (!attackEnabled) return;
 
       if (attackerSel === i) {
         clearSelection();
       } else {
         attackerSel = i;
         refreshSelectionHighlight(youRow, i);
-        const faceOK = opp.row.length === 0;
-        if (faceOK) document.getElementById("oppHp")?.classList.add("face-target");
-        const showFace = faceOK && attackEnabled && (attackerSel !== null) && !pendingSpell;
+        const faceOK2 = opp.row.length === 0;
+        if (faceOK2) document.getElementById("oppHp")?.classList.add("face-target");
+        const showFace = faceOK2 && attackEnabled && (attackerSel !== null) && !pendingSpell;
         setupFaceOverlay({ board: document.getElementById("board"), show: showFace });
       }
     });
 
-    // Ally target (spell/equip) は元のまま
+    // 味方対象（スペル/装備）
     if (pendingSpell?.target === "ally") {
       const handIdx = pendingSpell.handIdx;
       el.classList.add("targetable");
@@ -93,18 +92,18 @@ export function renderAll(state, you) {
   // Opp row
   opp.row.forEach((u, i) => {
     const el = renderUnit(u);
-    if (attackEnabled) {
-      // 敵ユニットへの攻撃クリック（★ 常時バインド & 内側で判定）
-      el.addEventListener("click", () => {
-        if (pendingSpell) return;        // 対象選択中は攻撃しない
-        if (!attackEnabled) return;      // 自分のターン以外は無効
-        if (attackerSel === null) return;
 
-        // ユニット→ユニット攻撃
+    if (attackEnabled) {
+      // 敵ユニットを攻撃
+      el.addEventListener("click", () => {
+        if (pendingSpell) return;
+        if (!attackEnabled) return;
+        if (attackerSel === null) return;
         dispatchAttack(board, attackerSel, i);
         clearSelection();
       });
     }
+    // 敵対象（スペル）
     if (pendingSpell?.target === "enemy") {
       const handIdx = pendingSpell.handIdx;
       el.classList.add("targetable");
@@ -114,6 +113,7 @@ export function renderAll(state, you) {
         clearTargeting();
       }, { once: true });
     }
+
     oppRow.appendChild(el);
   });
 
@@ -131,7 +131,6 @@ export function renderAll(state, you) {
     board,
     show: (opp.row.length === 0) && attackEnabled && (attackerSel !== null) && !pendingSpell
   });
-
 }
 
 export function renderBlank() {
@@ -157,9 +156,15 @@ function renderUnit(u) {
   const h = E("h4"); h.textContent = u.name; el.appendChild(h);
   const stats = E("div", "stats"); stats.textContent = `攻撃 ${u.atk} / 体力 ${u.hp}`; el.appendChild(stats);
 
-  // ★ 盤面ユニットにもキーワードバッジを表示（聖盾は消費で自動非表示）
+  // キーワードバッジ（聖盾は消費で非表示）
   const kwRow = kwRowFor(u.kw, u._shieldUsed);
   if (kwRow) el.appendChild(kwRow);
+
+  // 長押しプレビュー（盤面ユニット）
+  attachLongPress(el, () => openCardPreview({
+    type:"unit", name: u.name, cost: u.cost ?? 0, atk: u.atk, hp: u.hp,
+    kw: u.kw, _shieldUsed: u._shieldUsed
+  }));
 
   return el;
 }
@@ -169,13 +174,12 @@ const KW_TIP = {
   taunt:  "挑発：このユニットが場にいる限り、相手は先にこのユニットを攻撃しなければならない。",
   charge: "突撃：召喚したターンでも攻撃できる。",
   shield: "聖盾：このユニットが最初に受けるダメージを1回だけ無効化する。",
-  // deathrattle は下の deathrattleText で個別生成
+  // deathrattle は個別に動的説明
 };
 
 function kwBadge(label, tip) {
   const b = E("span", "kw");
   b.textContent = label;
-  // ブラウザ標準とカスタムの両方でツールチップが出るように
   b.setAttribute("data-tip", tip);
   b.title = tip;
   return b;
@@ -252,9 +256,9 @@ function renderCard(c, idx) {
   meta.appendChild(stats);
   el.appendChild(meta);
 
-  // ★ 手札のユニットにもキーワードバッジ（死亡時は内容を動的表示）
+  // 手札のユニットにもキーワードバッジ
   if (c.type === "unit") {
-    const kwRow = kwRowFor(c.kw, /*手札では未使用なので*/ false);
+    const kwRow = kwRowFor(c.kw, false);
     if (kwRow) el.appendChild(kwRow);
   }
 
@@ -274,6 +278,12 @@ function renderCard(c, idx) {
     }
   });
 
+  // 長押しプレビュー（手札カード）
+  attachLongPress(el, () => openCardPreview({
+    type: c.type, name: c.name, cost: c.cost ?? 0,
+    atk: c.atk, hp: c.hp, kw: c.kw, _shieldUsed: false, effect: c.effect
+  }));
+
   return el;
 }
 
@@ -287,14 +297,12 @@ function renderHiddenCard() {
   // 相手手札：カード裏面を表示
   const el = E("div", "card back");
 
-  // 画像ブロック
   const wrap = E("div", "art");
   const img = document.createElement("img");
   img.className = "art-img";
   img.loading = "lazy";
   img.alt = "カードの裏面";
 
-  // 絶対/相対 & 拡張子フォールバック（webp → png → jpg → jpeg）
   const exts = [".webp", ".png", ".jpg", ".jpeg"];
   const candidates = [];
   for (const ext of exts) {
@@ -305,11 +313,10 @@ function renderHiddenCard() {
   let i = 0;
   const tryNext = () => {
     if (i >= candidates.length) {
-      // 画像が無ければ簡易プレースホルダー
       img.remove();
       const ph = document.createElement("div");
       ph.className = "art-ph";
-      ph.textContent = "🂠"; // カード裏の記号
+      ph.textContent = "🂠";
       wrap.appendChild(ph);
       return;
     }
@@ -338,13 +345,11 @@ function setupFaceOverlay({ board, show }) {
     oppRow.appendChild(zone);
   }
 
-  // HPラベルも強調
   oppHpEl?.classList.toggle("face-ready", !!show);
 
   if (show) {
     zone.classList.remove("hidden");
     zone.onclick = () => {
-      // 選択中の攻撃役で顔面を殴る
       if (typeof attackerSel === "number") {
         board.dispatchEvent(new CustomEvent("attack", {
           bubbles: true,
@@ -358,7 +363,6 @@ function setupFaceOverlay({ board, show }) {
     zone.onclick = null;
   }
 }
-
 
 /* ---------- Descriptions (JP) ---------- */
 function effectDesc(e) {
@@ -466,13 +470,12 @@ function showEndOverlay(type, text) {
 
   document.getElementById("btnLobby").onclick = () => {
     hideEndOverlay();
-    document.body.classList.remove("in-match"); // ロビーUIを再表示
+    document.body.classList.remove("in-match");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 }
 
 function slugifyJP(name){
-  // 記号除去 → 空白/全角空白→ハイフン → 小文字
   return name
     .replace(/[^\p{Letter}\p{Number}\s]/gu, "")
     .trim()
@@ -489,21 +492,17 @@ function unitArtElement(name){
   img.loading = "lazy";
   img.alt = name;
 
-  // ファイル名は基本「そのまま」（日本語OK）。必要なら slugifyJP(name) に入れ替え可。
   const filename = name.trim();
   const exts = [".webp", ".png", ".jpg", ".jpeg"];
-
-  // 絶対・相対どちらでも成功するよう両方試す
   const candidates = [];
   for (const ext of exts) {
-    candidates.push(`/img/units/${filename}${ext}`); // ルート起点（CF Workers/通常ホスティング向け）
-    candidates.push( `img/units/${filename}${ext}`); // 相対パス（GH Pages のサブパス対策）
+    candidates.push(`/img/units/${filename}${ext}`);
+    candidates.push( `img/units/${filename}${ext}`);
   }
 
   let i = 0;
   const tryNext = () => {
     if (i >= candidates.length) {
-      // どれも失敗ならプレースホルダー
       img.remove();
       const ph = document.createElement("div");
       ph.className = "art-ph";
@@ -583,4 +582,104 @@ function equipArtElement(name){
   img.onerror = tryNext; tryNext();
   wrap.appendChild(img);
   return wrap;
+}
+
+// ========== Long-press preview ==========
+function attachLongPress(el, onTrigger, holdMs = 380) {
+  let t = null, moved = false, lpFired = false, sx = 0, sy = 0;
+
+  const clear = () => { if (t) clearTimeout(t); t = null; moved = false; };
+
+  const start = (x, y) => {
+    sx = x; sy = y; lpFired = false; clear();
+    t = setTimeout(() => { lpFired = true; el.__lp_suppressClick = true; onTrigger(); }, holdMs);
+  };
+  const move = (x, y) => {
+    if (!t) return;
+    if (Math.abs(x - sx) > 10 || Math.abs(y - sy) > 10) { moved = true; clear(); }
+  };
+  const end = () => { clear(); setTimeout(() => (el.__lp_suppressClick = false), 50); };
+
+  el.addEventListener("touchstart", (e) => {
+    const t0 = e.touches[0]; start(t0.clientX, t0.clientY);
+  }, { passive: true });
+  el.addEventListener("touchmove", (e) => {
+    const t0 = e.touches[0]; move(t0.clientX, t0.clientY);
+  }, { passive: true });
+  el.addEventListener("touchend", end, { passive: true });
+  el.addEventListener("touchcancel", end, { passive: true });
+
+  el.addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse") start(e.clientX, e.clientY); });
+  el.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") move(e.clientX, e.clientY); });
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
+
+  // 長押し後の誤クリック抑止
+  el.addEventListener("click", (e) => { if (el.__lp_suppressClick) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+}
+
+function openCardPreview(data){
+  // data: {type,name,cost,atk,hp,kw,_shieldUsed,effect?}
+  let backdrop = document.getElementById("previewBackdrop");
+  if (!backdrop) {
+    backdrop = document.createElement("div");
+    backdrop.id = "previewBackdrop";
+    backdrop.className = "preview-backdrop";
+    backdrop.innerHTML = `
+      <div id="previewCard" class="preview-card">
+        <button id="previewClose" class="preview-close" aria-label="閉じる">×</button>
+        <div class="type-row"><span class="type-badge"></span><span class="cost"></span></div>
+        <div class="art"></div>
+        <h3 class="title"></h3>
+        <div class="stats"></div>
+        <div class="kw-row"></div>
+        <div class="desc"></div>
+      </div>`;
+    document.body.appendChild(backdrop);
+    backdrop.addEventListener("click", (e)=>{ if(e.target===backdrop) closeCardPreview(); });
+    backdrop.querySelector("#previewClose").addEventListener("click", closeCardPreview);
+    document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCardPreview(); });
+  }
+
+  const card = backdrop.querySelector("#previewCard");
+  const typeBadge = card.querySelector(".type-badge");
+  const costEl = card.querySelector(".cost");
+  const art = card.querySelector(".art");
+  const title = card.querySelector(".title");
+  const stats = card.querySelector(".stats");
+  const kwRow = card.querySelector(".kw-row");
+  const desc = card.querySelector(".desc");
+
+  // 種別
+  typeBadge.textContent = (data.type==="unit"?"ユニット":data.type==="spell"?"スペル":"装備");
+  typeBadge.className = "type-badge " + (data.type==="unit"?"badge-unit":data.type==="spell"?"badge-spell":"badge-equip");
+  costEl.textContent = `コスト ${data.cost ?? 0}`;
+
+  // アート
+  art.innerHTML = "";
+  if (data.type==="unit") art.appendChild(unitArtElement(data.name));
+  else if (data.type==="spell") art.appendChild(spellArtElement(data.name));
+  else art.appendChild(equipArtElement(data.name));
+  art.querySelectorAll(".art-img").forEach(img => img.classList.add("art-img-large"));
+
+  // テキスト
+  title.textContent = data.name;
+  stats.textContent = (data.type==="unit") ? `攻撃 ${data.atk} / 体力 ${data.hp}` : "";
+  kwRow.innerHTML = "";
+  const krow = kwRowFor(data.kw, data._shieldUsed);
+  if (krow) kwRow.append(...krow.childNodes);
+  desc.textContent = cardDescription(data);
+
+  document.body.classList.add("preview-open");
+  backdrop.classList.add("show");
+  setTimeout(()=>backdrop.classList.add("visible"), 0);
+}
+function closeCardPreview(){
+  const backdrop = document.getElementById("previewBackdrop");
+  if (!backdrop) return;
+  backdrop.classList.remove("visible");
+  setTimeout(()=>{
+    backdrop.classList.remove("show");
+    document.body.classList.remove("preview-open");
+  }, 120);
 }
