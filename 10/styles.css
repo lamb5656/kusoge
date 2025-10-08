@@ -384,3 +384,13 @@ body.in-match .selected { box-shadow: 0 0 0 2px color-mix(in oklab, var(--unit) 
 
 /* 裏面カード（相手手札）も小型化 */
 body.in-match .card.back .art { aspect-ratio: 4 / 3; margin: 0; }
+
+/* === Keyword badges === */
+.kw-row{ margin-top:4px; display:flex; gap:6px; flex-wrap:wrap; }
+.kw{
+  font-size:10px; font-weight:700;
+  padding:2px 6px; border-radius:999px;
+  background: rgba(255,255,255,.85); color:#0b0e14;
+  border:1px solid var(--line);
+}
+.card.unit:has(.kw):not(.back){ padding-bottom:10px; }

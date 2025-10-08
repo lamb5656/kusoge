@@ -153,10 +153,22 @@ function renderUnit(u) {
   const el = E("div", "card unit");
   el.appendChild(typeBadge("ユニット", "badge-unit"));
   el.appendChild(unitArtElement(u.name));
+
   const h = E("h4"); h.textContent = u.name; el.appendChild(h);
   const stats = E("div", "stats"); stats.textContent = `攻撃 ${u.atk} / 体力 ${u.hp}`; el.appendChild(stats);
+
+  // ★ キーワード（あれば表示）
+  if (u.kw) {
+    const row = E("div", "kw-row");
+    if (u.kw.taunt)  row.appendChild(kwBadge("挑発"));
+    if (u.kw.charge) row.appendChild(kwBadge("突撃"));
+    if (u.kw.shield && !u._shieldUsed) row.appendChild(kwBadge("聖盾"));
+    if (u.kw.deathrattle) row.appendChild(kwBadge("死亡時"));
+    el.appendChild(row);
+  }
   return el;
 }
+function kwBadge(t){ const b = E("span","kw"); b.textContent = t; return b; }
 
 function renderCard(c, idx) {
   const el = E("div", `card ${c.type} selectable`);
