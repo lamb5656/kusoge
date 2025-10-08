@@ -424,11 +424,11 @@ body.in-match .card.back .art { aspect-ratio: 4 / 3; margin: 0; }
   opacity: 1; transform: translate(-50%, -8px);
 }
 
-/* ========== Card preview (mobile long-press) ========== */
+/* ========== Card preview (mobile long-press) — FULLSCREEN ========== */
 .preview-backdrop{
   position: fixed; inset: 0;
   display: none; place-items: center;
-  background: rgba(10,12,16,.4);
+  background: rgba(10,12,16,.55);
   z-index: 1000;
 }
 .preview-backdrop.show{ display: grid; }
@@ -436,36 +436,69 @@ body.in-match .card.back .art { aspect-ratio: 4 / 3; margin: 0; }
 @keyframes pv-fade{ from { opacity: 0 } to { opacity: 1 } }
 
 .preview-card{
-  width: min(92vw, 420px);
-  max-height: 90vh;
+  width: min(96vw, 520px);
+  max-height: 92vh;
   background: #0b0e14;
   border: 1px solid #2a2f36;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0,0,0,.45);
   padding: 14px 14px 16px;
   display: grid; gap: 10px;
-  grid-template-rows: auto auto auto auto auto auto;
-  overflow: hidden;
+  grid-template-rows: auto 1fr auto auto auto auto; /* アートを可変に */
+  overflow: auto; /* 収まりきらない時はスクロール */
 }
+
+/* 右上閉じるボタン */
 .preview-close{
   position: absolute; right: 10px; top: 8px;
   width: 28px; height: 28px; border-radius: 50%;
   border: 1px solid #2a2f36; background: rgba(255,255,255,.06);
   color: #c9d1d9; font-weight: 800; cursor: pointer;
 }
+
+/* ヘッダ行 */
 .preview-card .type-row{
   display: flex; justify-content: space-between; align-items: center;
 }
 .preview-card .type-badge{ transform: scale(1.05); }
 .preview-card .cost{ font-weight: 700; opacity: .85; }
 
-.preview-card .art{ width: 100%; aspect-ratio: 4/3; overflow: hidden; border-radius: 12px; }
-.preview-card .art .art-img-large{ width: 100%; height: 100%; object-fit: cover; }
+/* アート：プレビューは“切り抜かない” */
+.preview-card .art{
+  width: 100%;
+  min-height: 40vh;          /* 縦をしっかり確保 */
+  max-height: 70vh;          /* 画面を超えない */
+  border-radius: 12px; overflow: hidden;
+  background: #0e131a;
+}
+.preview-card .art .art-img-large{
+  width: 100%; height: 100%;
+  object-fit: contain;       /* ← cover から contain に変更して見切れ防止 */
+}
 
+/* テキスト */
 .preview-card .title{ margin: 0; font-size: 18px; font-weight: 800; color: #e6edf3; }
 .preview-card .stats{ font-size: 14px; opacity: .9; }
 .preview-card .kw-row{ display: flex; gap: 6px; flex-wrap: wrap; }
 .preview-card .desc{ font-size: 13px; line-height: 1.4; opacity: .9; }
 
-/* プレビュー中は背面のスクロールを止める */
+/* プレビュー中は背面スクロールを停止 */
 body.preview-open{ overflow: hidden; }
+
+/* ---- モバイルは本当に“ほぼ全画面” ---- */
+@media (max-width: 900px){
+  .preview-backdrop{ background: rgba(10,12,16,.72); }
+  .preview-card{
+    width: 100vw; height: 100vh; max-height: 100vh;
+    border-radius: 0; border-left: 0; border-right: 0;
+    padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+    grid-template-rows: auto 1fr auto auto auto auto; /* アートを1frで伸ばす */
+  }
+  .preview-card .art{
+    min-height: 0;            /* 1frで伸びるので固定最小値は解除 */
+    height: auto;
+  }
+  .preview-close{
+    top: calc(8px + env(safe-area-inset-top));
+  }
+}
