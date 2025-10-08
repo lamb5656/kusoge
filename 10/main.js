@@ -16,48 +16,56 @@ function resetBeforeMatch(){ try{ roomConn?.close(); }catch{} roomConn=null; you
 
 function bindGameUI(){ bindUI({ onPlayCard:(handIdx, targetIdx)=>{ if(!roomConn?.ready) return; const msg = { type:"move", op:"play", handIdx }; if (typeof targetIdx === "number") msg.targetIdx = targetIdx; roomConn.send(msg); }, onAttack:(attackerIdx, targetIdx)=>{ if(!roomConn?.ready) return; roomConn.send({ type:"move", op:"attack", attackerIdx, targetIdx }); }, onEndTurn:()=>{ if(!roomConn?.ready) return; roomConn.send({ type:"move", op:"end" }); }, }); }
 
+function genRoomId(){
+  try {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+  } catch {}
+  return "rm_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2);
+}
+
 async function quickMatch(){ try{ resetBeforeMatch(); setStatus("Matching..."); const alias = els.alias.value.trim() || "Anon"; const chosen = deserializeDeck(localStorage.getItem("deck")); const found = await connectMatchmaker(WORKER_BASE_URL); you = found.you; setStatus(`Matched! You are ${you}. Joining room...`); roomConn = await connectRoom(WORKER_BASE_URL, found.roomId, { onOpen(api){ setStatus(`Connected to room ${found.roomId}`); api.send({ type:"hello", alias, deck: chosen }); }, onMessage(data){ if (data.type === "sync") { state = data.state; window.__STATE__ = state; window.__YOU__ = you; renderAll(state, you); if (state.winner) { const w = state.winner === "draw" ? "Draw" : (state.winner === you ? "You win!" : "You lose."); setStatus(`Game over: ${w}`); } } else if (data.type === "info") { setStatus(data.text); } }, onClose(){ setStatus("Room closed"); roomConn=null; }, onError(err){ console.error(err); setStatus("Error"); roomConn=null; }, }); } catch(e){ console.error(e); setStatus("Match failed"); } }
 
 async function aiMatch(){
   try{
     resetBeforeMatch();
     setStatus("Connecting AI...");
-
-    const alias  = els.alias.value.trim() || "Anon";
-    const chosen = deserializeDeck(localStorage.getItem("deck"));
-    // ランダムな部屋IDを生成
-    const roomId = (self.crypto?.randomUUID?.() || Math.random().toString(36).slice(2));
-
-    // ★ 人間は常に A 側（AIは B）で進行させる
-    you = "A";
-
-    // 既存の connectRoom をそのまま利用。roomId に `?ai=1` を付与
-    roomConn = await connectRoom(WORKER_BASE_URL, `${roomId}?ai=1`, {
-      onOpen(api){
-        setStatus(`Connected vs AI (${roomId})`);
-        api.send({ type:"hello", alias, deck: chosen });
-      },
+    const alias = (document.getElementById("alias")?.value || "Anon").trim();
+    const roomId = genRoomId() + "?ai=1";
+    you = "A"; // 人間=A
+    roomConn = await connectRoom(WORKER_BASE_URL, roomId, {
+      onOpen(api){ api.send({ type:"hello", alias }); setStatus("Connected vs AI"); },
       onMessage(data){
-        if (data.type === "sync") {
-          state = data.state;
-          window.__STATE__ = state; window.__YOU__ = you;
-          renderAll(state, you);
-          if (state.winner) {
-            const w = state.winner === "draw" ? "Draw" : (state.winner === you ? "You win!" : "You lose.");
-            setStatus(`Game over: ${w}`);
-          }
-        } else if (data.type === "info") {
-          setStatus(data.text);
-        }
+        if (data.type === "sync") { state = data.state; window.__STATE__=state; window.__YOU__=you; renderAll(state, you); }
+        else if (data.type === "info") setStatus(data.text);
       },
       onClose(){ setStatus("Room closed"); roomConn=null; },
-      onError(err){ console.error(err); setStatus("Error"); roomConn=null; },
+      onError(e){ console.error(e); setStatus("Error"); roomConn=null; },
     });
-  } catch(e){
-    console.error(e);
-    setStatus("AI match failed");
-  }
+  } catch(e){ console.error(e); setStatus("AI match failed"); }
 }
+
+function bindAiButton(){
+  const btn = document.getElementById("aiMatch");
+  if (!btn) return;
+  // ダブルタップ対策の簡易ガード
+  let locked = false;
+  const handler = (e)=>{
+    if (locked) return;
+    locked = true; setTimeout(()=>locked=false, 350);
+    aiMatch();
+  };
+  // クリックが拾われない環境向けに pointerup を併用
+  btn.addEventListener("click", handler, { passive:true });
+  btn.addEventListener("pointerup", handler, { passive:true });
+}
+
+window.addEventListener("DOMContentLoaded", ()=>{
+  bindAiButton();
+  // （他のUI初期化があればここで実行）
+});
+
 
 setupDeckUI(); bindGameUI();
 els.quick.addEventListener("click", quickMatch);
