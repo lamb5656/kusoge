@@ -202,7 +202,46 @@ function typeBadge(text, cls) {
   return b;
 }
 
-function renderHiddenCard() { const el = E("div", "card"); const h = E("h4"); h.textContent = "?"; el.appendChild(h); return el; }
+function renderHiddenCard() {
+  // 相手手札：カード裏面を表示
+  const el = E("div", "card back");
+
+  // 画像ブロック
+  const wrap = E("div", "art");
+  const img = document.createElement("img");
+  img.className = "art-img";
+  img.loading = "lazy";
+  img.alt = "カードの裏面";
+
+  // 絶対/相対 & 拡張子フォールバック（webp → png → jpg → jpeg）
+  const exts = [".webp", ".png", ".jpg", ".jpeg"];
+  const candidates = [];
+  for (const ext of exts) {
+    candidates.push(`/img/card-back${ext}`);
+    candidates.push( `img/card-back${ext}`);
+  }
+
+  let i = 0;
+  const tryNext = () => {
+    if (i >= candidates.length) {
+      // 画像が無ければ簡易プレースホルダー
+      img.remove();
+      const ph = document.createElement("div");
+      ph.className = "art-ph";
+      ph.textContent = "🂠"; // カード裏の記号
+      wrap.appendChild(ph);
+      return;
+    }
+    img.src = candidates[i++];
+  };
+  img.onerror = tryNext;
+  tryNext();
+
+  wrap.appendChild(img);
+  el.appendChild(wrap);
+  return el;
+}
+
 
 /* ---------- Descriptions (JP) ---------- */
 function effectDesc(e) {

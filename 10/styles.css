@@ -229,3 +229,20 @@ button[disabled]{ opacity:.5; cursor:not-allowed; }
 #youHand { order: 6; }
 #youHp   { order: 7; align-self: center; }
 
+/* ---- Card Back (opponent hand) ---- */
+.card.back{
+  padding: 8px;                 /* バッジ分の余白は不要 */
+}
+.card.back::before{ display:none; }  /* 左のタイプ色帯を消す */
+.card.back .art{
+  aspect-ratio: 1 / 1;          /* 正方形で見栄えよく */
+  margin-bottom: 0;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.card.back .art-img{
+  width: 100%; height: 100%;
+  object-fit: cover;            /* 画像を全面にフィル */
+  object-position: 50% 50%;
+}
