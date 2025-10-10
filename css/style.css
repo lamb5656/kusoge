@@ -1,0 +1,222 @@
+:root {
+    --bg: #0f1220;
+    --panel: #171a2b;
+    --panel2: #1f2240;
+    --ink: #e8ebff;
+    --muted: #9aa3c7;
+    --accent: #6aa6ff;
+    --danger: #ff6a8a;
+    --gold: #ffd86a;
+}
+
+* {
+    box-sizing: border-box
+}
+
+html, body {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    background: radial-gradient(1200px 600px at 70% -10%, #1b1f39 10%, transparent 60%), radial-gradient(900px 500px at 10% 110%, #15172b 0%, transparent 60%), var(--bg);
+    color: var(--ink);
+    font-family: system-ui,-apple-system,"Hiragino Kaku Gothic ProN",Meiryo,"Noto Sans JP",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    display: grid;
+    place-items: center;
+    padding: 24px
+}
+
+.card {
+    width: min(900px,95vw);
+    background: linear-gradient(180deg,var(--panel2),var(--panel));
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 22px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    overflow: hidden
+}
+
+.header {
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: linear-gradient(90deg,rgba(255,255,255,.04),transparent);
+    border-bottom: 1px solid rgba(255,255,255,.06)
+}
+
+.badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #10122b;
+    border: 1px solid rgba(255,255,255,.08);
+    color: var(--muted)
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: .04em
+}
+
+.screen {
+    padding: 22px 20px 26px
+}
+
+.log {
+    height: min(48vh,440px);
+    overflow: auto;
+    padding: 8px 4px;
+    scroll-behavior: smooth
+}
+
+.line {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin: 10px 0;
+    opacity: 0;
+    transform: translateY(6px);
+    animation: in .35s ease forwards
+}
+
+.name {
+    flex: 0 0 auto;
+    font-weight: 700;
+    color: var(--accent)
+}
+
+.text {
+    flex: 1 1 auto;
+    line-height: 1.8;
+    font-size: 16px
+}
+
+.sys {
+    color: var(--muted);
+    font-style: italic
+}
+
+@keyframes in {
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+
+.choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 12px;
+    margin-top: 14px
+}
+
+button.choice {
+    appearance: none;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 16px;
+    text-align: left;
+    background: linear-gradient(180deg,#232752,#1b1f39);
+    color: var(--ink);
+    cursor: pointer;
+    outline: 1px solid rgba(255,255,255,.06);
+    transition: transform .08s ease,outline-color .2s ease,box-shadow .2s ease
+}
+
+    button.choice:hover {
+        transform: translateY(-1px);
+        outline-color: rgba(106,166,255,.7);
+        box-shadow: 0 6px 20px rgba(106,166,255,.12)
+    }
+
+    button.choice:active {
+        transform: translateY(0)
+    }
+
+.hint {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 6px
+}
+
+.footer {
+    padding: 10px 20px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    border-top: 1px solid rgba(255,255,255,.06)
+}
+
+.kbd {
+    font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    padding: 2px 6px;
+    border: 1px solid rgba(255,255,255,.18);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    background: #0e0f1c;
+    color: #c8cff4;
+    font-size: 12px
+}
+
+.center {
+    display: grid;
+    place-items: center;
+    gap: 16px;
+    text-align: center;
+    padding: 28px
+}
+
+.gameover {
+    color: var(--danger);
+    font-weight: 800;
+    font-size: 28px
+}
+
+.happy {
+    color: var(--gold);
+    font-weight: 900;
+    font-size: 36px;
+    letter-spacing: .06em;
+    text-shadow: 0 0 20px rgba(255,216,106,.35)
+}
+
+.btn {
+    appearance: none;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 16px;
+    background: #2d315f;
+    color: var(--ink);
+    cursor: pointer;
+    font-weight: 700;
+    outline: 1px solid rgba(255,255,255,.08)
+}
+
+    .btn:hover {
+        background: #353a73
+    }
+
+.confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden
+}
+
+.piece {
+    position: absolute;
+    top: -10vh;
+    font-size: 24px;
+    animation: fall linear forwards;
+    opacity: .95
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(115vh) rotate(720deg);
+        opacity: .98
+    }
+}
