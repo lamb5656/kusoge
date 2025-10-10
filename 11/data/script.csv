@@ -44,4 +44,4 @@ room,outcome,,,,,,MINIGAME
 postMini,line,トンパ,（ふう…なんとか避けきった）,,,,
 postMini,line,,床一面には転がるトンパと空になった空き缶。,,,,
 postMini,line,,遠くでトンパたちの声が響く。次の試練の気配。,,,,
-postMini,outcome,,,,,,PROLOGUE_CLEAR
+postMini,outcome,,,,,,MINIGAME_STAIRS

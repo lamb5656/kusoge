@@ -1,3 +1,4 @@
+import { startMinigameStairs } from './minigame-stairs.js';
 // トンパのハンター試験合格記 - main.js（ミニゲーム対応版）
 // ・CSV駆動の会話/選択肢
 // ・クリック/タップで行送り
@@ -210,6 +211,32 @@ async function playScene(sceneId) {
 
 
 async function resolveOutcome(sceneId, outcome) {
+    if (outcome === 'MINIGAME_STAIRS') {
+        // 階段を上がりながら下剤ジュースを避けるミニゲーム
+        const start = () => startMinigameStairs({
+            onWin: () => {
+                removeMinigame();
+                // クリア後はプロローグクリアへ
+                resolveOutcome('postMini', 'PROLOGUE_CLEAR');
+            },
+            onLose: () => {
+                removeMinigame();
+                // 同じ場所でもう一度挑戦できるUI
+                outcomeScreen({
+                    title: 'M I S S !',
+                    className: 'gameover',
+                    body: '階段で転倒！ もう一度挑戦する？',
+                    actions: [
+                        { label: 'リトライ', onClick: () => { clearOutcomeScreens(); start(); } },
+                        { label: '最初から', onClick: () => { removeMinigame(); startGame(); } },
+                    ]
+                });
+            }
+        });
+        clearOutcomeScreens();
+        start();
+        return;
+    } else 
     if (outcome.startsWith('GAMEOVER')) {
         addLine('', '焼きすぎて香りが店中に充満…！');
         await waitAdvance();
