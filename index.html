@@ -1,33 +1,39 @@
 <!doctype html>
 <html lang="ja">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>トンパのハンター試験合格記 - プロローグ</title>
-    <link rel="stylesheet" href="./css/style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>kusoge インデックス</title>
+  <meta name="description" content="GitHub Pages の /kusoge/ にあるデモ（/1, /2, ...）を自動参照して日本語案内を生成します。">
+  <link rel="stylesheet" href="assets/kusoge.css">
 </head>
 <body>
-    <main class="card" id="app" aria-live="polite">
-        <div class="header">
-            <span class="badge">プロローグ</span>
-            <div class="title">トンパのハンター試験合格記</div>
-        </div>
+<header>
+  <h1>kusoge インデックス</h1>
+  <div class="controls">
+    <div class="ctrl">
+      <label for="maxNum">最大番号</label>
+      <input id="maxNum" type="number" min="1" step="1" value="20" />
+    </div>
+    <div class="ctrl">
+      <label for="basePath">ベース</label>
+      <input id="basePath" type="text" value="/kusoge/" size="10" />
+    </div>
+    <button id="scanBtn">再スキャン</button>
+  </div>
+</header>
 
-        <section class="screen" id="screen">
-            <div class="log" id="log"></div>
-            <div id="choices" class="choices" hidden></div>
-            <div class="hint" id="hint" hidden>数字キー <span class="kbd">1</span>/<span class="kbd">2</span>/<span class="kbd">3</span>/<span class="kbd">4</span> でも選べます</div>
-        </section>
+<main>
+  <p id="hint" class="hint">
+   ゲームを自動スキャンして存在するページだけ表示します。
+  </p>
+  <section class="grid" id="cards"></section>
+</main>
 
-        <div class="footer">
-            <div>セーブ: プロローグ内のみ</div>
-            <div>操作: クリック / タップ / 数字キー</div>
-        </div>
-    </main>
+<footer>
+  <small>© lamb5656 / GitHub Pages</small>
+</footer>
 
-    <div class="confetti" id="confetti" aria-hidden="true"></div>
-
-    <!-- 新 main.js を参照（クリック進行＋二重選択防止を内包） -->
-    <script type="module" src="./js/main.js"></script>
+<script src="assets/kusoge.js"></script>
 </body>
 </html>
