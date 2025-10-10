@@ -1,0 +1,34 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --line: #232838;
+  --text: #e6e8ef;
+  --muted: #a7aab6;
+  --accent: #23b5e5;
+  --good: #46d17e;
+  --warn: #ffb84d;
+  --bad: #ff5c7a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", "Apple Color Emoji", "Segoe UI Emoji"; }
+#app { display: grid; grid-template-columns: 360px 1fr; height: 100vh; }
+#sidebar { overflow: auto; padding: 16px; border-right: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0)) , var(--panel); }
+#sidebar h1 { font-size: 20px; margin: 0 0 12px; }
+.card { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 12px; background: rgba(0,0,0,0.25); }
+.card h2 { font-size: 16px; margin: 0 0 8px; }
+.row { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+label { font-size: 14px; min-width: 88px; color: var(--text); }
+input[type="range"] { flex: 1; }
+button { background: var(--accent); color: #00222c; border: none; border-radius: 8px; padding: 8px 10px; font-weight: 700; cursor: pointer; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.hint { color: var(--muted); font-size: 12px; line-height: 1.4; }
+.muted { color: var(--muted); gap: 12px; display: flex; justify-content: space-between; }
+.hidden { display: none; }
+
+#playArea { display: grid; place-items: center; }
+#gameCanvas { width: min(100%, 1200px); height: auto; background: radial-gradient(1200px 600px at 50% 50%, #141823, #0e1017 60%); border-left: 1px solid var(--line); }
+
+#scoreSummary { font-size: 14px; line-height: 1.6; }
+#scoreSummary .rank { font-size: 22px; font-weight: 800; color: var(--good); }
+#scoreSummary .warn { color: var(--warn); }
+#scoreSummary .bad { color: var(--bad); }

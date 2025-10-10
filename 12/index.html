@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>カップ麺クラフト：3ステップ・チャレンジ（MVP）</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <h1>カップ麺クラフト</h1>
+
+      <div class="card">
+        <h2>レシピ</h2>
+        <div id="recipe">
+          <div>粉末A: <span id="targetA">-</span> / 粉末B: <span id="targetB">-</span></div>
+          <div>待機：<span id="waitSec">10</span> 秒（感覚）</div>
+          <div>具材（入れる数）：<span id="toppingList">-</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>コントロール</h2>
+
+        <!-- Powder -->
+        <div data-phase="powder" class="phase-panel">
+          <div class="row">
+            <label>粉末A 傾き</label>
+            <input id="tiltA" type="range" min="0" max="120" value="0" />
+            <span id="tiltAVal">0°</span>
+          </div>
+          <div class="row">
+            <label>粉末B 傾き</label>
+            <input id="tiltB" type="range" min="0" max="120" value="0" />
+            <span id="tiltBVal">0°</span>
+          </div>
+          <div class="row">
+            <button id="powderDone">粉末 完了</button>
+          </div>
+          <p class="hint">PC: Q/E=粉末A、A/D=粉末B。傾け過ぎはこぼれに注意。</p>
+        </div>
+
+        <!-- Toppings -->
+        <div data-phase="toppings" class="phase-panel hidden">
+          <div class="row">
+            <label>まな板 左右</label>
+            <input id="boardTiltX" type="range" min="-30" max="30" value="0" />
+            <span id="boardTiltXVal">0°</span>
+          </div>
+          <div class="row">
+            <label>まな板 奥行き</label>
+            <input id="boardTiltY" type="range" min="-30" max="30" value="15" />
+            <span id="boardTiltYVal">15°</span>
+          </div>
+          <div class="row">
+            <button id="toppingsDone">具材 投入完了</button>
+          </div>
+          <p class="hint">PC: A/D=左右、W/S=奥行き。出口の位置をカップの真上に合わせる。</p>
+        </div>
+
+        <!-- Pour -->
+        <div data-phase="pour" class="phase-panel hidden">
+          <div class="row">
+            <button id="pourBtn">お湯を注ぐ（長押し）</button>
+            <div class="subtext">目盛ラインまで。溢れると減点。</div>
+          </div>
+          <div class="row">
+            <button id="lidBtn" disabled>フタを閉じる</button>
+          </div>
+        </div>
+
+        <!-- Wait / Open -->
+        <div data-phase="lidWait" class="phase-panel hidden">
+          <p>感覚で 10 秒待ってから「開封！」を押してください（カウント表示なし）</p>
+          <div class="row">
+            <button id="openBtn">開封！</button>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div data-phase="result" class="phase-panel hidden">
+          <div id="scoreSummary"></div>
+          <div class="row">
+            <button id="retryBtn">同じステージで再挑戦</button>
+            <button id="nextStageBtn">次のステージへ</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>設定</h2>
+        <div class="row">
+          <label>
+            <input id="gyroToggle" type="checkbox" />
+            ジャイロ操作（実験的）
+          </label>
+        </div>
+        <div class="row">
+          <label>ステージ</label>
+          <select id="stageSelect"></select>
+        </div>
+        <div class="row muted">
+          <div>清潔度：<span id="cleanliness">100%</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <main id="playArea">
+      <canvas id="gameCanvas" width="960" height="600"></canvas>
+    </main>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
