@@ -140,7 +140,7 @@ function towerItemHtml(i, info){
 function refreshTowerList(state){
   const wrap = document.getElementById("towerList");
   if (!wrap) return;
-  if (!towers.length){ wrap.innerHTML = `<div class="tower-item muted">まだ砲台がありませんにゃ。</div>`; return; }
+  if (!towers.length){ wrap.innerHTML = `<div class="tower-item muted">まだ砲台がありません。</div>`; return; }
   const parts = [];
   for (let i=0;i<towers.length;i++){ parts.push(towerItemHtml(i, getTowerInfo(i, state))); }
   wrap.innerHTML = parts.join("");
@@ -169,7 +169,7 @@ function refreshInspector(state){
   setText(insRange,`${info.range}`);
 
   if (btnUpgrade){ btnUpgrade.textContent = "タイプ一括はショップから"; btnUpgrade.disabled = true; }
-  if (insHint) insHint.textContent = "個別UPは廃止にゃ。ショップの各タイプ「アップグレード」で全台が上がるにゃ。";
+  if (insHint) insHint.textContent = "個別UPは廃止。ショップの各タイプ「アップグレード」で全台が上がる。";
 }
 
 /* ---------------- 入力（pointer対応） ---------------- */
