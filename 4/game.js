@@ -264,7 +264,7 @@
     ctx.stroke();
 
     if (initial && game.state === STATE.READY) {
-      msgEl.textContent = '「開始」でスタート。押して上昇・離して下降。横棒2本の隙間（スリット）をくぐるにゃ。';
+      msgEl.textContent = '「開始」でスタート。押して上昇・離して下降。横棒2本の隙間（スリット）をくぐる。';
     }
   }
 
