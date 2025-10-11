@@ -1,4 +1,5 @@
 import { startMinigameStairs } from './minigame-stairs.js';
+window.devStartStairs = () => startMinigameStairs({ onWin:()=>console.log('WIN'), onLose:()=>console.log('LOSE') });
 // トンパのハンター試験合格記 - main.js（ミニゲーム対応版）
 // ・CSV駆動の会話/選択肢
 // ・クリック/タップで行送り
