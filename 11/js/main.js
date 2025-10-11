@@ -226,7 +226,7 @@ async function resolveOutcome(sceneId, outcome) {
                 outcomeScreen({
                     title: 'M I S S !',
                     className: 'gameover',
-                    body: '階段で転倒！ もう一度挑戦する？',
+                    body: '階段で転倒！下痢になった！ もう一度挑戦する？',
                     actions: [
                         { label: 'リトライ', onClick: () => { clearOutcomeScreens(); start(); } },
                         { label: '最初から', onClick: () => { removeMinigame(); startGame(); } },
@@ -283,7 +283,7 @@ async function resolveOutcome(sceneId, outcome) {
             outcomeScreen({
                 title: 'ミニゲーム失敗',
                 className: 'gameover',
-                body: 'ジュース直撃！もう一度挑戦する？',
+                body: 'ジュース直撃！下痢になった！ もう一度挑戦する？',
                 actions: [
                     {
                         label: 'リトライ', onClick: () => {
