@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <title>Vansava-like Mobile MVP</title>
+  <link rel="stylesheet" href="./styles.css?v=split1" />
+</head>
+<body>
+  <div id="ui">
+    <header>
+      <label>Room:</label>
+      <input id="room" value="test" inputmode="latin" />
+      <button id="connect">Connect</button>
+      <span id="status" class="badge">disconnected</span>
+    </header>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="pads">
+      <div class="padL" id="padL"><div id="stickBase"><div id="stick"></div></div></div>
+      <div class="padR" id="padR"><div class="dash" id="dashBtn"><div class="dash-label">Dash</div></div></div>
+    </div>
+
+    <div class="hud" id="hud"></div>
+  </div>
+
+  <!-- XP Bar -->
+  <div class="xpbar" id="xpbar">
+    <div class="xpfill" id="xpfill"></div>
+    <div class="xptext" id="xptext">Lv.1  0/40</div>
+  </div>
+
+  <!-- Level-up choices -->
+  <div id="levelup" class="overlay">
+    <div class="choices" id="choiceGrid"></div>
+  </div>
+
+  <script type="module" src="./js/main.js?v=split1"></script>
+</body>
+</html>
