@@ -3,11 +3,7 @@ import { setupInput } from "./input.js";
 import { setupRender } from "./render.js";
 import { loadAssets } from "./assets.js";
 
-const WS_URL =
-  location.hostname === "localhost"
-    ? "ws://localhost:8787/room"                    // ローカル開発用
-    : "wss://archero-like.lamb565.workers.dev/room"; // 本番（Cloudflare等）
-
+const WS_URL = "wss://archero-like.lamb565.workers.dev";
 const statusEl = document.getElementById("status");
 const { draw } = setupRender();
 let sendTick = null;
@@ -67,11 +63,11 @@ function showChoices(choices){
 }
 
 async function connect(){
-  await ensureAssets(); // ★接続前に画像を読み込むにゃ
+  await ensureAssets();
 
   const roomId = document.getElementById("room").value.trim() || "test";
   if (state.ws) try{ state.ws.close(); }catch{}
-  state.ws = new WebSocket(getWsBase()+"/room/"+encodeURIComponent(roomId));
+  state.ws = new WebSocket(`${WS_URL}/room/${encodeURIComponent(roomId)}`);
   state.ws.onopen = ()=> statusEl.textContent = "connected";
   state.ws.onclose = ()=> { statusEl.textContent = "disconnected"; state.me = null; };
   state.ws.onmessage = (ev)=>{
