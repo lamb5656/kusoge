@@ -20,14 +20,14 @@ const choiceGrid = document.getElementById("choiceGrid");
 document.getElementById("connect").onclick = connect;
 
 const ASSET_MANIFEST = {
-  player:  "/img/player.png",
-  shadow:  "/img/shadow.png",
-  enemy_chaser:   "/img/enemy_chaser.png",
-  enemy_dasher:   "/img/enemy_dasher.png",
-  enemy_tank:     "/img/enemy_tank.png",
-  enemy_weaver:   "/img/enemy_weaver.png",
-  enemy_splitter: "/img/enemy_splitter.png",
-  enemy_mini:     "/img/enemy_mini.png",
+  player:  "./img/player.png",
+  shadow:  "./img/shadow.png",
+  enemy_chaser:   "./img/enemy_chaser.png",
+  enemy_dasher:   "./img/enemy_dasher.png",
+  enemy_tank:     "./img/enemy_tank.png",
+  enemy_weaver:   "./img/enemy_weaver.png",
+  enemy_splitter: "./img/enemy_splitter.png",
+  enemy_mini:     "./img/enemy_mini.png",
   // （必要なら既存の enemy / elite も残してOK）
 };
 
