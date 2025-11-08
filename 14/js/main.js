@@ -238,44 +238,38 @@ async function resolveOutcome(sceneId, outcome) {
         start();
         return;
     } else 
-    if (outcome === 'GAMEOVER') {
-        addLine('', 'みんなの冷たい視線が鋭く刺さる…！');
-        await waitAdvance();
-        await waitAdvance();
-        outcomeScreen({
-            title: 'G A M E  O V E R',
-            className: 'gameover',
-            body: 'セクシャルハラスメントで逮捕された...。',
-            actions: [{ label: '最初から', onClick: () => startGame() }]
-        });
-    } else if (outcome === 'GAMEOVER2') {
-        addLine('', 'みんなの冷たい視線が鋭く刺さる…！');
-        await waitAdvance();
-        await waitAdvance();
-        outcomeScreen({
-            title: 'G A M E  O V E R',
-            className: 'gameover',
-            body: 'その選択は自分の乳首インクド・ホロ欠けを修正してからにしよう。',
-            actions: [{ label: '最初から', onClick: () => startGame() }]
-        });
-    } else if (outcome === 'GAMEOVER3') {
-        addLine('', 'シャワーを浴びながら配信を始めた');
-        await waitAdvance();
-        await waitAdvance();
-        outcomeScreen({
-            title: 'G A M E  O V E R',
-            className: 'gameover',
-            body: 'わいせつ物陳列罪で逮捕された...。',
-            actions: [{ label: '最初から', onClick: () => startGame() }]
-        });
-    } else if (outcome === 'PROLOGUE_CLEAR') {
-        addLine('', '……つづく');
-        await waitAdvance();
-        outcomeScreen({
-            title: 'プロローグ クリア',
-            body: '次のシーンへ進めます。続きの実装を追加してください。',
-            actions: [{ label: 'もう一回やる', onClick: () => startGame() }]
-        });
+    if (outcome.startsWith('GAMEOVER')) {
+
+        if (outcome === 'GAMEOVER') {
+            addLine('', 'みんなの冷たい視線が鋭く刺さる…！');
+            await waitAdvance();
+            await waitAdvance();
+            outcomeScreen({
+                title: 'G A M E  O V E R',
+                className: 'gameover',
+                body: 'セクシャルハラスメントで逮捕された...。',
+                actions: [{ label: '最初から', onClick: () => startGame() }]
+            });
+        } else if (outcome === 'GAMEOVER2') {
+            addLine('', 'みんなの冷たい視線が鋭く刺さる…！');
+            await waitAdvance();
+            await waitAdvance();
+            outcomeScreen({
+                title: 'G A M E  O V E R',
+                className: 'gameover',
+                body: 'その選択は自分の乳首インクド・ホロ欠けを修正してからにしよう。',
+                actions: [{ label: '最初から', onClick: () => startGame() }]
+            });
+        } else if (outcome === 'GAMEOVER3') {
+            addLine('', 'シャワーを浴びながら配信を始めた');
+            await waitAdvance();
+            await waitAdvance();
+            outcomeScreen({
+                title: 'G A M E  O V E R',
+                className: 'gameover',
+                body: 'わいせつ物陳列罪で逮捕された...。',
+                actions: [{ label: '最初から', onClick: () => startGame() }]
+
     } else if (outcome === 'HAPPY_END') {
         confetti(120);
         outcomeScreen({
