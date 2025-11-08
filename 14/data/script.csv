@@ -1,8 +1,8 @@
 scene_id,type,speaker,text,choice_key,choice_label,next_scene,meta
 intro,line,yuki,(うっ...ここは...どこだ...？),,,,
-room,line,,目を覚ますと見知らぬ部屋。照明は落ち、薄暗い室内。,,,
-room,line,,──ズキンッ...。激しい頭痛がする...,,,
-room,line,,室内には様々な棚やテーブルが置かれている...。,,,
+intro,line,,目を覚ますと見知らぬ部屋。照明は落ち、薄暗い室内。,,,
+intro,line,,──ズキンッ...。激しい頭痛がする...,,,
+intro,line,,室内には様々な棚やテーブルが置かれている...。,,,
 intro,line,yuki,(とりあえず...現状を把握するか...),,,,
 intro,choice,,,1,皆さんの乳首の具合を聞く,go1,
 intro,choice,,,2,女性に体の洗い方を聞く,go1,

@@ -261,7 +261,7 @@ async function resolveOutcome(sceneId, outcome) {
         outcomeScreen({
             title: 'H A P P Y  E N D !!!',
             className: 'happy',
-            body: '「業火」ボタンは幻影解除の合図だった！ 店は協会の隠し会場、歓声と花火、合格証と豪華ステーキが授与される。トンパ、栄光の合格。',
+            body: 'yukiの竹刀(3cm)は自身に装着されていたのだ。yuki、栄光の追放。',
             actions: [{ label: '最初から', onClick: () => startGame() }]
         });
     } else if (outcome === 'MINIGAME') {
