@@ -5,7 +5,7 @@ room,line,,──ズキンッ...。激しい頭痛がする...,,,
 room,line,,室内には様々な棚やテーブルが置かれている...。,,,
 intro,line,yuki,(とりあえず...現状を把握するか...),,,,
 intro,choice,,,1,皆さんの乳首の具合を聞く,go1,
-intro,choice,,,2,女性に体の洗い方を聞く,go2,
+intro,choice,,,2,女性に体の洗い方を聞く,go1,
 intro,choice,,,3,目についたシャワー室へ入る,weakSimmer,
 intro,choice,,,4,落ち着くために股間を触る,happyEnd,
 
