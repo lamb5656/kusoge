@@ -246,7 +246,7 @@ async function resolveOutcome(sceneId, outcome) {
             outcomeScreen({
                 title: 'G A M E  O V E R',
                 className: 'gameover',
-                body: 'セクシャルハラスメントで逮捕された...。',
+                body: 'その選択は自分の乳首インクド・ホロ欠けを修正してからにしよう。',
                 actions: [{ label: '最初から', onClick: () => startGame() }]
             });
         } else if (outcome === 'GAMEOVER2') {
@@ -255,7 +255,7 @@ async function resolveOutcome(sceneId, outcome) {
             outcomeScreen({
                 title: 'G A M E  O V E R',
                 className: 'gameover',
-                body: 'その選択は自分の乳首インクド・ホロ欠けを修正してからにしよう。',
+                body: 'セクシャルハラスメントで逮捕された...。',
                 actions: [{ label: '最初から', onClick: () => startGame() }]
             });
         } else if (outcome === 'GAMEOVER3') {
