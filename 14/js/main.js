@@ -269,6 +269,7 @@ async function resolveOutcome(sceneId, outcome) {
                 className: 'gameover',
                 body: 'わいせつ物陳列罪で逮捕された...。',
                 actions: [{ label: '最初から', onClick: () => startGame() }]
+        }
 
     } else if (outcome === 'HAPPY_END') {
         confetti(120);
