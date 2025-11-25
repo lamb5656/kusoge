@@ -1,0 +1,229 @@
+// ==UserScript==
+// @name         EX-Toreca Oripa Auto Pull
+// @namespace    https://lamb5656.github.io/
+// @version      0.5.2
+// @description  .click()のみ。URL監視でSPA対応。countはタブごとに独立管理（マルチタブ安定）
+// @match        https://oripa.ex-toreca.com/pack/*
+// @match        https://oripa.ex-toreca.com/oripa-original-movie*
+// @run-at       document-idle
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  const DEFAULTS = {
+    enabled: true,
+    limit: 0,                 // 0=無制限（タブごとに適用）
+    scanIntervalMs: 200,
+    firstDelayMin: 300,
+    firstDelayMax: 900,
+    confirmDelayMin: 150,
+    confirmDelayMax: 600,
+    cooldownFirstMs: 2200,
+    cooldownConfirmMs: 2200,
+    movieWaitMin: 1500,
+    movieWaitMax: 3500,
+    fallbackPackUrl: 'https://oripa.ex-toreca.com/pack/21042',
+    autoCheckRecharge: true
+  };
+
+  const getV = (k) => GM_getValue(k, DEFAULTS[k]);
+  const setV = (k, v) => GM_setValue(k, v);
+  const rand = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+  const norm = s => (s||'').replace(/\s+/g,' ').trim();
+  const log  = (...a)=>console.log('[OripaLoop]', new Date().toISOString(), ...a);
+
+  // === タブごとID & sessionStorageベースのタブ専用ストレージ ===
+  const TAB_ID = sessionStorage.getItem('oripa_tab_id') || `${Date.now()}-${Math.random().toString(36).slice(2,9)}`;
+  sessionStorage.setItem('oripa_tab_id', TAB_ID);
+  const tkey = (k)=> `oripa_${k}_${TAB_ID}`;
+  const tget = (k, def)=> {
+    try { const v = sessionStorage.getItem(tkey(k)); return v ? JSON.parse(v) : def; }
+    catch { return def; }
+  };
+  const tset = (k, val)=> { try { sessionStorage.setItem(tkey(k), JSON.stringify(val)); } catch {} };
+
+  const isPack  = location.pathname.startsWith('/pack/');
+  const isMovie = location.pathname.startsWith('/oripa-original-movie');
+
+  // 直近PackのURLはタブ専用→無ければ共有→最後に既定
+  function rememberPackUrl(url){
+    try {
+      sessionStorage.setItem('oripa_pack_url', url); // タブ専用
+      setV('packUrl', url); // 共有（保険）
+    } catch {}
+  }
+  const getPackUrl = ()=> sessionStorage.getItem('oripa_pack_url') || getV('packUrl') || DEFAULTS.fallbackPackUrl;
+
+  if (isPack) rememberPackUrl(location.href);
+
+  // ========= ボタン検出（Ptは無視、文言だけ） =========
+  function findOneDrawButton() {
+    const packBtns = Array.from(document.querySelectorAll('button.pack-btn'));
+    for (const b of packBtns) {
+      const p = b.querySelector('p');
+      if (p && norm(p.textContent) === '10枚引く') return b;
+    }
+    const anyBtns = Array.from(document.querySelectorAll('button'));
+    const byText = anyBtns.find(b => norm(b.textContent).includes('10枚引く'));
+    if (byText) return byText;
+    const labels = Array.from(document.querySelectorAll('p, span, div, a'));
+    const lab = labels.find(el => norm(el.textContent).includes('10枚引く'));
+    if (lab) {
+      let cur = lab;
+      for (let i=0; i<6 && cur; i++) {
+        if (cur.tagName === 'BUTTON') return cur;
+        cur = cur.parentElement;
+      }
+    }
+    return null;
+  }
+  function findConfirmButton() {
+    const btns = Array.from(document.querySelectorAll('button'));
+    return btns.find(b => norm(b.textContent).includes('パックを引く')) || null;
+  }
+  function maybeCheckRecharge() {
+    if (!getV('autoCheckRecharge')) return;
+    const cb = document.querySelector('#checkbox');
+    if (cb instanceof HTMLInputElement && !cb.checked) cb.click();
+  }
+  const clickLater = (el, delayMs)=> setTimeout(() => requestAnimationFrame(() => { try { el.click(); } catch {} }), delayMs);
+
+  // ========= 状態 =========
+  let lastFirstAt = 0;
+  let lastConfirmAt = 0;
+  let pending = null;
+  let movieTimer = null;
+  const clearPending = ()=>{ if(pending){ clearTimeout(pending); pending=null; } };
+
+  // ========= Packループ =========
+  function tickPack() {
+    if (!getV('enabled')) return;
+
+    const lim = getV('limit');           // 上限はタブごと
+    const cnt = tget('count', 0);        // カウントはタブごと
+    if (lim > 0 && cnt >= lim) return;
+
+    const cbtn = findConfirmButton();
+    if (cbtn) {
+      if (Date.now() - lastConfirmAt >= getV('cooldownConfirmMs') && !pending) {
+        const d = rand(getV('confirmDelayMin'), getV('confirmDelayMax'));
+        log(`TAB[${TAB_ID}] found [パックを引く] → ${d}ms後に.click()`);
+        pending = setTimeout(() => {
+          clearPending();
+          const b = findConfirmButton();
+          if (b) {
+            lastConfirmAt = Date.now();
+            clickLater(b, 0);
+          }
+        }, d);
+      }
+      return;
+    }
+
+    const fbtn = findOneDrawButton();
+    if (fbtn) {
+      maybeCheckRecharge();
+      if (Date.now() - lastFirstAt >= getV('cooldownFirstMs') && !pending) {
+        const d = rand(getV('firstDelayMin'), getV('firstDelayMax'));
+        log(`TAB[${TAB_ID}] found [10枚引く] → ${d}ms後に.click()`);
+        rememberPackUrl(location.href); // 押す直前のURLを保存（タブ専用）
+        pending = setTimeout(() => {
+          clearPending();
+          const b = findOneDrawButton();
+          if (b) {
+            lastFirstAt = Date.now();
+            clickLater(b, 0);
+          }
+        }, d);
+      }
+    }
+  }
+
+  // ========= Movie：自動帰還（タブごとカウント） =========
+  function scheduleBackFromMovie() {
+    if (movieTimer || !getV('enabled')) return;
+
+    const next = tget('count', 0) + 1;
+    tset('count', next);
+
+    const wait = rand(getV('movieWaitMin'), getV('movieWaitMax'));
+    const back = getPackUrl();
+
+    log(`TAB[${TAB_ID}] movie. count(tab)=${next} → back in ${wait}ms`);
+    movieTimer = setTimeout(() => {
+      movieTimer = null;
+      // history.back() → ダメなら強制遷移
+      try { history.back(); } catch {}
+      setTimeout(() => {
+        if (location.pathname.startsWith('/oripa-original-movie')) {
+          log(`TAB[${TAB_ID}] force back: ${back}`);
+          location.assign(back);
+        }
+      }, 1200);
+    }, wait);
+  }
+
+  // ========= ルーター監視 =========
+  const onPack = ()=> location.pathname.startsWith('/pack/');
+  const onMovie = ()=> location.pathname.startsWith('/oripa-original-movie');
+  function routerTick() {
+    if (onMovie()) {
+      scheduleBackFromMovie();
+    } else if (onPack()) {
+      rememberPackUrl(location.href);
+      tickPack();
+    }
+  }
+  (function patchHistory(){
+    const fire = ()=> window.dispatchEvent(new Event('locationchange'));
+    const _push = history.pushState, _replace = history.replaceState;
+    history.pushState = function(){ const r=_push.apply(this, arguments); fire(); return r; };
+    history.replaceState = function(){ const r=_replace.apply(this, arguments); fire(); return r; };
+    window.addEventListener('popstate', fire);
+  })();
+
+  // ========= メニュー =========
+  (function menu() {
+    const en = !!getV('enabled');
+    GM_registerMenuCommand(en ? '■ 停止する' : '▶ 自動開始する', () => {
+      setV('enabled', !en); location.reload();
+    });
+    GM_registerMenuCommand('回数上限(このタブ) 0=無制限', () => {
+      const v = prompt('回数上限（このタブにのみ適用）', String(getV('limit')));
+      if (v !== null) setV('limit', Math.max(0, parseInt(v,10)||0));
+    });
+    GM_registerMenuCommand('このタブのカウンタをリセット', () => tset('count', 0));
+    GM_registerMenuCommand('待ち(10枚引く)[min,max]', () => {
+      const cur = `${getV('firstDelayMin')},${getV('firstDelayMax')}`;
+      const v = prompt('「10枚引く」待ち [min,max] (ms)', cur);
+      if (v) { const [a,b]=v.split(',').map(n=>Math.max(0,parseInt(n,10)||0));
+        if(!isNaN(a)&&!isNaN(b)&&a<=b){ GM_setValue('firstDelayMin',a); GM_setValue('firstDelayMax',b); } }
+    });
+    GM_registerMenuCommand('待ち(パックを引く)[min,max]', () => {
+      const cur = `${getV('confirmDelayMin')},${getV('confirmDelayMax')}`;
+      const v = prompt('「パックを引く」待ち [min,max] (ms)', cur);
+      if (v) { const [a,b]=v.split(',').map(n=>Math.max(0,parseInt(n,10)||0));
+        if(!isNaN(a)&&!isNaN(b)&&a<=b){ GM_setValue('confirmDelayMin',a); GM_setValue('confirmDelayMax',b); } }
+    });
+    GM_registerMenuCommand('待ち(Movie→戻る)[min,max]', () => {
+      const cur = `${getV('movieWaitMin')},${getV('movieWaitMax')}`;
+      const v = prompt('Movie戻り待ち [min,max] (ms)', cur);
+      if (v) { const [a,b]=v.split(',').map(n=>Math.max(0,parseInt(n,10)||0));
+        if(!isNaN(a)&&!isNaN(b)&&a<=b){ GM_setValue('movieWaitMin',a); GM_setValue('movieWaitMax',b); } }
+    });
+    GM_registerMenuCommand(getV('autoCheckRecharge') ? 'Pt自動チェック: ON→OFF' : 'Pt自動チェック: OFF→ON', () => {
+      setV('autoCheckRecharge', !getV('autoCheckRecharge'));
+      alert('切り替えました。再読込してください。');
+    });
+  })();
+
+  // ========= 起動 =========
+  const interval = setInterval(routerTick, getV('scanIntervalMs'));
+  window.addEventListener('locationchange', routerTick);
+  window.addEventListener('beforeunload', ()=> clearInterval(interval));
+  routerTick();
+})();
