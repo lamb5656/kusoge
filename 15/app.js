@@ -5,7 +5,7 @@ const $ = (id) => document.getElementById(id);
 // ===== Settings =====
 // If true: any word found in WORDS_BY_LEN[len] is accepted as correct (dictionary-based).
 // If false: only the currentWord is accepted.
-const ANY_WORD_OK = false;
+const ANY_WORD_OK = true;
 
 // Normalize strings before comparing (fixes cases like が vs が).
 const NORMALIZE_FORM = "NFC";
