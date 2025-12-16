@@ -2,38 +2,76 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>kusoge インデックス</title>
-  <meta name="description" content="GitHub Pages の /kusoge/ にあるデモ（/1, /2, ...）を自動参照して日本語案内を生成します。">
-  <link rel="stylesheet" href="assets/kusoge.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111111" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Word Scramble</title>
 </head>
+
 <body>
-<header>
-  <h1>kusoge インデックス</h1>
-  <div class="controls">
-    <div class="ctrl">
-      <label for="maxNum">最大番号</label>
-      <input id="maxNum" type="number" min="1" step="1" value="20" />
-    </div>
-    <div class="ctrl">
-      <label for="basePath">ベース</label>
-      <input id="basePath" type="text" value="/kusoge/" size="10" />
-    </div>
-    <button id="scanBtn">再スキャン</button>
-  </div>
-</header>
+  <main class="app" role="application" aria-label="Word Scramble">
+    <header class="top">
+      <div class="brand">
+        <div class="title">Word Scramble</div>
+        <div class="sub" id="subText">文字を並び替えて単語を作ろう</div>
+      </div>
 
-<main>
-  <p id="hint" class="hint">
-   ゲームを自動スキャンして存在するページだけ表示します。
-  </p>
-  <section class="grid" id="cards"></section>
-</main>
+      <div class="stats">
+        <div class="chip" aria-label="レベル">
+          Lv <span id="levelText">1</span>
+        </div>
+        <div class="chip" aria-label="連続正解">
+          Streak <span id="streakText">0</span>
+        </div>
+        <div class="chip" aria-label="ベスト">
+          Best <span id="bestText">0</span>
+        </div>
+      </div>
+    </header>
 
-<footer>
-  <small>© lamb5656 / GitHub Pages</small>
-</footer>
+    <section class="panel">
+      <div class="row">
+        <div class="label">完成させる</div>
+        <div class="actions">
+          <button class="btn ghost" id="btnShuffle" type="button">シャッフル</button>
+          <button class="btn ghost" id="btnClear" type="button">クリア</button>
+        </div>
+      </div>
 
-<script src="assets/kusoge.js"></script>
+      <div class="answer" id="answerSlots" aria-label="解答欄"></div>
+
+      <div class="hintrow">
+        <div class="hint" id="hintText" aria-live="polite"></div>
+        <button class="btn" id="btnHint" type="button">ヒント</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="row">
+        <div class="label">文字タイル</div>
+        <div class="small" id="poolHelp">タイルをタップして上に入れる</div>
+      </div>
+      <div class="pool" id="tilePool" aria-label="文字タイル"></div>
+    </section>
+
+    <footer class="bottom">
+      <button class="btn primary" id="btnNext" type="button" disabled>次へ</button>
+      <button class="btn" id="btnResetProgress" type="button">進行リセット</button>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="words.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Register Service Worker for offline/PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
