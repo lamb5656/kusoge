@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>kusoge インデックス</title>
+  <meta name="description" content="GitHub Pages の /kusoge/ にあるデモ（/1, /2, ...）を自動参照して日本語案内を生成します。">
+  <link rel="stylesheet" href="assets/kusoge.css">
+</head>
+<body>
+<header>
+  <h1>kusoge インデックス</h1>
+  <div class="controls">
+    <div class="ctrl">
+      <label for="maxNum">最大番号</label>
+      <input id="maxNum" type="number" min="1" step="1" value="20" />
+    </div>
+    <div class="ctrl">
+      <label for="basePath">ベース</label>
+      <input id="basePath" type="text" value="/kusoge/" size="10" />
+    </div>
+    <button id="scanBtn">再スキャン</button>
+  </div>
+</header>
+
+<main>
+  <p id="hint" class="hint">
+   ゲームを自動スキャンして存在するページだけ表示します。
+  </p>
+  <section class="grid" id="cards"></section>
+</main>
+
+<footer>
+  <small>© lamb5656 / GitHub Pages</small>
+</footer>
+
+<script src="assets/kusoge.js"></script>
+</body>
+</html>
